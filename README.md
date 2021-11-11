@@ -12,10 +12,11 @@ Atomファイルを吐いてくれないWebコミックサイトをスクレイ�
 
 公式でAtomとかRSSを吐いてくれればいいんですけどね…。
 
-- [COMICメテオ](https://comic-meteor.jp/)
-  - 毎週水曜更新
-- [ストーリアダッシュ](https://storia.takeshobo.co.jp/)
-  - 毎週金曜更新
+- 毎週水曜更新
+  - [COMICメテオ](https://comic-meteor.jp/)
+- 毎週金曜更新
+  - [ストーリアダッシュ](https://storia.takeshobo.co.jp/)
+  - [ガンマぷらす](https://gammaplus.takeshobo.co.jp/)
 
 ※ 自分が見たいとこだけ試したので、サイトで提供されてる全部のコンテンツで確実に動くわけではないです。
 

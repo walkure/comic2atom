@@ -25,6 +25,10 @@ func GetFeed(target string) (string, *feeds.Feed, error) {
 		return storiaFeed(uri)
 	}
 
+	if strings.HasPrefix(target, "https://gammaplus.takeshobo.co.jp/manga/") {
+		return gammaPlusFeed(uri)
+	}
+
 	if strings.HasPrefix(target, "https://comic-meteor.jp/") {
 		return meteorFeed(uri)
 	}

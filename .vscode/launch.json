@@ -10,7 +10,11 @@
             "request": "launch",
             "mode": "auto",
             "program": "main.go",
-            "args":["-targets","https://storia.takeshobo.co.jp/manga/osi_stalker/,https://comic-meteor.jp/maotujinai/","-atom", "./"]
+            "args":[
+                "-targets",
+                "https://storia.takeshobo.co.jp/manga/osi_stalker/,https://comic-meteor.jp/maotujinai/,https://gammaplus.takeshobo.co.jp/manga/kobito_recipe/",
+                "-atom", 
+                "./"]
         }
     ]
 }
