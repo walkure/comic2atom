@@ -33,6 +33,10 @@ func GetFeed(target string) (string, *feeds.Feed, error) {
 		return meteorFeed(uri)
 	}
 
+	if strings.HasPrefix(target, "https://www.comicride.jp/book/") {
+		return rideFeed(uri)
+	}
+
 	return "", nil, fmt.Errorf("%s not supported site", target)
 }
 

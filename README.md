@@ -17,6 +17,8 @@ Atomファイルを吐いてくれないWebコミックサイトをスクレイ�
 - 毎週金曜更新
   - [ストーリアダッシュ](https://storia.takeshobo.co.jp/)
   - [ガンマぷらす](https://gammaplus.takeshobo.co.jp/)
+- ほぼ月～木
+  - [コミックライド](https://www.comicride.jp/)
 
 ※ 自分が見たいとこだけ試したので、サイトで提供されてる全部のコンテンツで確実に動くわけではないです。
 
