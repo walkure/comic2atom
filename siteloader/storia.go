@@ -15,18 +15,18 @@ func storiaFeed(target *url.URL) (string, *feeds.Feed, error) {
 		return "", nil, fmt.Errorf("storia:FetchErr:%w", err)
 	}
 
-	title := doc.Find("#main_contents > article.main_area > div > section.work_main > div.col_work_name > h1").Text()
+	title := doc.Find("#top > div > article > section:nth-child(1) > div > ul > li:nth-child(1)").Text()
 	if title == "" {
 		return "", nil, fmt.Errorf("storia:title not found")
 	}
 
-	author := doc.Find("#main_contents > article.main_area > div > section.work_main > div.col_work_name > div.author").Text()
+	author := doc.Find("#top > div > article > section:nth-child(1) > div > ul > li:nth-child(2)").Text()
 	if author == "" {
 		return "", nil, fmt.Errorf("storia:author not found")
 	}
-	desc := trimDescription(doc.Find("#main_contents > article.main_area > div > section.work_main > p").Text())
+	desc := trimDescription(doc.Find("#top > div > article > section:nth-child(2) > div > div.detail__area > div:nth-child(1) > p").Text())
 
-	episodes := doc.Find("#main_contents > article.main_area > div > section.episode > div.box_episode")
+	episodes := doc.Find("#top > div > article > section:nth-child(3) > div > div.read__area")
 
 	feed := &feeds.Feed{
 		Title:       title,
@@ -35,24 +35,22 @@ func storiaFeed(target *url.URL) (string, *feeds.Feed, error) {
 		Author:      &feeds.Author{Name: author},
 		Created:     time.Now(),
 	}
-
 	walkEpisode := func(i int, s *goquery.Selection) {
-		title := s.Find("div.episode_title").Text()
-		caption := s.Find("div.episode_caption").Text()
+		title := s.Find("a > ul > li.read__detail > ul > li.episode").Text()
 		href, _ := s.Find("a").Attr("href")
-
+		img, _ := s.Find("a > ul > li.thumb > img").Attr("src")
 		uri, _ := resolveRelativeURI(target, href)
+		thumb, _ := resolveRelativeURI(target, img)
 
 		feed.Items = append(feed.Items, &feeds.Item{
-			Title:       title,
-			Link:        &feeds.Link{Href: uri},
-			Description: caption,
-			Id:          generateHashedHex(uri),
+			Title:     title,
+			Link:      &feeds.Link{Href: uri},
+			Id:        generateHashedHex(uri),
+			Enclosure: &feeds.Enclosure{Url: thumb},
 		})
 	}
 
-	episodes.Find("div.box_episode_L").Each(walkEpisode)
-	episodes.Find("div.box_episode_M").Each(walkEpisode)
+	episodes.Find("div.read__outer").Each(walkEpisode)
 
 	if len(feed.Items) == 0 {
 		return "", nil, fmt.Errorf("storia:no episode entry")

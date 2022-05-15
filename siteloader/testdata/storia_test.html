@@ -1,57 +1,86 @@
-<!DOCTYPE html>
-<html lang='ja'>
-   <head>
-      <title></title>
-   </head>
-   <body id="detail">
-       <article id="main_contents">
-         <article class="main_area">
-            <div class="box-fadein lazyload" data-expand="-20">
-               <section class="work_main">
-                  <div class="col_work_name">
-                     <h1>テストタイトル</h1>
-                     <div class="author">テスト名</div>
-                  </div>
-                  <p class="work_sammary">
-                     テスト<br>
-                     てすと<br>
-                     ストーリー
-                  </p>
-               </section>
-               <section class="episode">
-               <div class="box_episode">
-                  <div class="box_episode_L">
-                     <a href="./_files/5/" target="_blank" id="t05"></a>
-                     <div class="box_episode_text">
-                        <div class="episode_title">テスト5</div>
-                        <div class="episode_caption">テスト5D</div>
-                     </div>
-                  </div>
-                  <div class="box_episode_M matchHeight">
-                     <a href="./_files/4/" target="_blank" id="t04"></a>
-                     <div class="box_episode_text">
-                        <div class="episode_title">テスト4</div>
-                        <div class="episode_caption">テスト4D</div>
-                     </div>
-                  </div>
-                  <div class="box_episode_M matchHeight">
-                     <div class="img_comics" num="2" id="t03"></div>
-                     <div class="box_episode_text">
-                        <div class="episode_title">テスト2</div>
-                        <div class="episode_caption"></div>
-                     </div>
-                  </div>
-                  <div style="clear:both"><br></div>
-                  <div class="box_episode_M matchHeight">
-                     <a href="./_files/01/" target="_blank" id="t01"></a>
-                     <div class="box_episode_text">
-                        <div class="episode_title">テスト1</div>
-                        <div class="episode_caption">テスト1D</div>
+<!DOCTYPE HTML>
+<html>
+<body>
+   <div id="top" class="wrap">
+      <div class="toggle__nav">
+
+         <article class="other_container">
+            <!-- トップ -->
+            <section>
+               <div class="content">
+                  <ul class="manga__title">
+                     <li>テストタイトル</li>
+                     <li>テスト名</li>
+                  </ul>
+               </div>
+            </section>
+
+            <section class="section section__bottom">
+               <div class="content">
+                  <div class="detail__area">
+                     <div class="detail__item">
+                        <h2>ストーリー</h2>
+                        <p>テスト<br>
+                           てすと<br>
+                           ストーリー</p>
                      </div>
                   </div>
                </div>
+            </section>
+
+            <section class="section section__bottom">
+               <div class="content">
+                  <!-- 最新エピソード -->
+                  <a id="latest" class="anker"></a>
+                  <div class="read__area">
+                     <div class="read__outer">
+                        <!-- マンガへのリンク -->
+                        <a href="../../../path_t/_files/5/" class="read__link">
+                           <ul class="read__btn">
+                              <li class="thumb"><img src="../../path_t/_img/5.jpg" alt="" /></li>
+                              <li class="read__detail">
+                                 <ul class="read__contents">
+                                    <li class="episode">テスト5</li>
+                                 </ul>
+                              </li>
+                           </ul>
+                        </a>
+                     </div>
+
+                     <div class="read__outer">
+                        <!-- マンガへのリンク -->
+                        <a href="#comics" class="read__link">
+                           <ul class="read__btn">
+                              <li class="thumb"><img src="../../path_t/_files/5/" alt="" /></li>
+                              <li class="read__detail">
+                                 <ul class="read__contents">
+                                    <li class="episode">テスト2</li>
+                                 </ul>
+                              </li>
+                           </ul>
+                           <div class="episode__read">購入する</div>
+                        </a>
+                     </div>
+
+                     <div class="read__outer">
+                        <!-- マンガへのリンク -->
+                        <a href="../../../path_t/_files/01/" class="read__link">
+                           <ul class="read__btn">
+                              <li class="thumb"><img src="../../path_t/_img/1.jpg" alt="" /></li>
+                              <li class="read__detail">
+                                 <ul class="read__contents">
+                                    <li class="episode">テスト1</li>
+                                 </ul>
+                              </li>
+                           </ul>
+                           <div class="episode__read">読む</div>
+                        </a>
+                     </div>
+                  </div>
+            </section>
             </div>
          </article>
-      </article>
-   </body>
+      </div>
+   </div>
+</body>
 </html>

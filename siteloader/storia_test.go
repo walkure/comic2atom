@@ -56,27 +56,23 @@ func TestStoria(t *testing.T) {
 	assert.Equal(t, "テスト名", feed.Author.Name)
 
 	abspath, _ := resolveRelativeURI(testUrl, "./_files/5/")
+	absimg, _ := resolveRelativeURI(testUrl, "./_img/5.jpg")
 	assert.Equal(t, generateHashedHex(abspath), feed.Items[0].Id)
 	assert.Equal(t, abspath, feed.Items[0].Link.Href)
+	assert.Equal(t, absimg, feed.Items[0].Enclosure.Url)
 	assert.Equal(t, "テスト5", feed.Items[0].Title)
-	assert.Equal(t, "テスト5D", feed.Items[0].Description)
 
-	abspath, _ = resolveRelativeURI(testUrl, "./_files/4/")
+	abspath, _ = resolveRelativeURI(testUrl, "./est#comics")
 	assert.Equal(t, generateHashedHex(abspath), feed.Items[1].Id)
 	assert.Equal(t, abspath, feed.Items[1].Link.Href)
-	assert.Equal(t, "テスト4", feed.Items[1].Title)
-	assert.Equal(t, "テスト4D", feed.Items[1].Description)
-
-	abspath, _ = resolveRelativeURI(testUrl, "./est")
-	assert.Equal(t, generateHashedHex(abspath), feed.Items[2].Id)
-	assert.Equal(t, abspath, feed.Items[2].Link.Href)
-	assert.Equal(t, "テスト2", feed.Items[2].Title)
+	assert.Equal(t, "テスト2", feed.Items[1].Title)
 
 	abspath, _ = resolveRelativeURI(testUrl, "./_files/01/")
-	assert.Equal(t, generateHashedHex(abspath), feed.Items[3].Id)
-	assert.Equal(t, abspath, feed.Items[3].Link.Href)
-	assert.Equal(t, "テスト1", feed.Items[3].Title)
-	assert.Equal(t, "テスト1D", feed.Items[3].Description)
+	absimg, _ = resolveRelativeURI(testUrl, "./_img/1.jpg")
+	assert.Equal(t, generateHashedHex(abspath), feed.Items[2].Id)
+	assert.Equal(t, abspath, feed.Items[2].Link.Href)
+	assert.Equal(t, absimg, feed.Items[2].Enclosure.Url)
+	assert.Equal(t, "テスト1", feed.Items[2].Title)
 
-	assert.Panics(t, func() { _ = feed.Items[4].Title })
+	assert.Panics(t, func() { _ = feed.Items[3].Title })
 }
