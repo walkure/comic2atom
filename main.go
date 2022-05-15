@@ -37,13 +37,13 @@ func main() {
 
 func processTarget(targetUri, pathPrefix string) {
 
+	fmt.Printf("Fetch %s ", targetUri)
+
 	fname, feed, err := siteloader.GetFeed(targetUri)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Printf("Fetch %s ", targetUri)
 
 	atomData, err := feed.ToAtom()
 	if err != nil {
