@@ -26,7 +26,7 @@ func storiaFeed(target *url.URL) (string, *feeds.Feed, error) {
 	}
 	desc := trimDescription(doc.Find("#top > div > article > section:nth-child(2) > div > div.detail__area > div:nth-child(1) > p").Text())
 
-	episodes := doc.Find("#top > div > article > section:nth-child(3) > div > div.read__area")
+	episodes := doc.Find("div.read__area")
 
 	feed := &feeds.Feed{
 		Title:       title,
