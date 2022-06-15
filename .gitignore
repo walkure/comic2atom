@@ -13,3 +13,6 @@ comic2atom.exe
 
 # generated atoms
 *.atom
+
+# test list file
+test.list

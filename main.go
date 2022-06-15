@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"log"
@@ -13,6 +14,7 @@ import (
 
 var (
 	targets        = flag.String("targets", "", "check target uri(s)")
+	list           = flag.String("list", "", "targets url(s) list")
 	atomPathPrefix = flag.String("atom", "", "atom file save path prefix")
 )
 
@@ -21,18 +23,60 @@ func init() {
 }
 
 func main() {
-	if *targets == "" || *atomPathPrefix == "" {
-		log.Fatal("requires target and atom arguments.")
+	if (*targets == "" && *list == "") || *atomPathPrefix == "" {
+		log.Fatal("requires target,list and atom arguments.")
 	}
 
-	if strings.Contains(*targets, ",") {
-		for _, target := range strings.Split(*targets, ",") {
-			processTarget(target, *atomPathPrefix)
+	var targetUris []string
+
+	if *targets != "" {
+		if strings.Contains(*targets, ",") {
+			targetUris = append(targetUris, strings.Split(*targets, ",")...)
+
+		} else {
+			targetUris = append(targetUris, *targets)
 		}
-
-	} else {
-		processTarget(*targets, *atomPathPrefix)
 	}
+
+	if *list != "" {
+		loaded, err := loadList(*list)
+		if err != nil {
+			fmt.Printf("cannot load file(%s):%v", *list, err)
+		}
+		targetUris = append(targetUris, loaded...)
+	}
+
+	if len(targetUris) == 0 {
+		fmt.Printf("no target found from args(%s) nor list(%s)", *targets, *list)
+	}
+
+	for _, target := range targetUris {
+		processTarget(target, *atomPathPrefix)
+	}
+}
+
+func loadList(listPath string) ([]string, error) {
+	fp, err := os.Open(listPath)
+	if err != nil {
+		return nil, fmt.Errorf("cannot open file: %w", err)
+	}
+	defer fp.Close()
+
+	scanner := bufio.NewScanner(fp)
+	var list []string
+	for scanner.Scan() {
+		line := scanner.Text()
+		if line != "" && line[0] != '#' {
+			list = append(list, line)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("scanner error: %w", err)
+	}
+
+	return list, nil
+
 }
 
 func processTarget(targetUri, pathPrefix string) {
