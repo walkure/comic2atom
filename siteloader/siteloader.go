@@ -37,6 +37,10 @@ func GetFeed(target string) (string, *feeds.Feed, error) {
 		return rideFeed(uri)
 	}
 
+	if strings.HasPrefix(target, "https://www.comic-valkyrie.com/") {
+		return valkyrieFeed(uri)
+	}
+
 	return "", nil, fmt.Errorf("%s not supported site", target)
 }
 

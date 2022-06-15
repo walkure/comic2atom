@@ -59,21 +59,40 @@ func TestMeteor(t *testing.T) {
 	assert.Equal(t, "テストてすとストーリー", feed.Description)
 	assert.Equal(t, "テスト名", feed.Author.Name)
 
-	assert.Equal(t, "eeec23eabaa19622c2dff466251aa48a", feed.Items[0].Id)
-	assert.Equal(t, "https://example.com/test/5", feed.Items[0].Link.Href)
-	assert.Equal(t, "テスト5", feed.Items[0].Title)
+	testcases := []struct {
+		path  string
+		hash  string
+		title string
+	}{
+		{
+			path:  "https://example.com/test/5",
+			hash:  "eeec23eabaa19622c2dff466251aa48a",
+			title: "テスト5",
+		},
+		{
+			path:  "https://example.com/test/3",
+			hash:  "00610eae8358ad655e54e5275009fe21",
+			title: "テスト3",
+		},
+		{
+			path:  "https://example.com/test/2",
+			hash:  "f2ce4bdb1b346b98f28027cbb71e4432",
+			title: "テスト2",
+		},
+		{
+			path:  "https://example.com/test/1",
+			hash:  "8471aefb4d405fe08651deebad1479de",
+			title: "テスト1",
+		},
+	}
 
-	assert.Equal(t, "00610eae8358ad655e54e5275009fe21", feed.Items[1].Id)
-	assert.Equal(t, "https://example.com/test/3", feed.Items[1].Link.Href)
-	assert.Equal(t, "テスト3", feed.Items[1].Title)
-
-	assert.Equal(t, "f2ce4bdb1b346b98f28027cbb71e4432", feed.Items[2].Id)
-	assert.Equal(t, "https://example.com/test/2", feed.Items[2].Link.Href)
-	assert.Equal(t, "テスト2", feed.Items[2].Title)
-
-	assert.Equal(t, "8471aefb4d405fe08651deebad1479de", feed.Items[3].Id)
-	assert.Equal(t, "https://example.com/test/1", feed.Items[3].Link.Href)
-	assert.Equal(t, "テスト1", feed.Items[3].Title)
+	for index, tt := range testcases {
+		t.Run(tt.title, func(t *testing.T) {
+			assert.Equal(t, tt.hash, feed.Items[index].Id)
+			assert.Equal(t, tt.path, feed.Items[index].Link.Href)
+			assert.Equal(t, tt.title, feed.Items[index].Title)
+		})
+	}
 
 	assert.Panics(t, func() { _ = feed.Items[4].Title })
 }

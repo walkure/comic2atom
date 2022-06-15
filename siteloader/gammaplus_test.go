@@ -55,28 +55,41 @@ func TestGammaPlus(t *testing.T) {
 	assert.Equal(t, "テストてすとストーリー", feed.Description)
 	assert.Equal(t, "テスト名", feed.Author.Name)
 
-	abspath, _ := resolveRelativeURI(testUrl, "./_files/5/")
-	assert.Equal(t, generateHashedHex(abspath), feed.Items[0].Id)
-	assert.Equal(t, abspath, feed.Items[0].Link.Href)
-	assert.Equal(t, "テスト5", feed.Items[0].Title)
-	assert.Equal(t, "テスト5D", feed.Items[0].Description)
-
-	abspath, _ = resolveRelativeURI(testUrl, "./_files/4/")
-	assert.Equal(t, generateHashedHex(abspath), feed.Items[1].Id)
-	assert.Equal(t, abspath, feed.Items[1].Link.Href)
-	assert.Equal(t, "テスト4", feed.Items[1].Title)
-	assert.Equal(t, "テスト4D", feed.Items[1].Description)
-
-	abspath, _ = resolveRelativeURI(testUrl, "./est")
-	assert.Equal(t, generateHashedHex(abspath), feed.Items[2].Id)
-	assert.Equal(t, abspath, feed.Items[2].Link.Href)
-	assert.Equal(t, "テスト2", feed.Items[2].Title)
-
-	abspath, _ = resolveRelativeURI(testUrl, "./_files/01/")
-	assert.Equal(t, generateHashedHex(abspath), feed.Items[3].Id)
-	assert.Equal(t, abspath, feed.Items[3].Link.Href)
-	assert.Equal(t, "テスト1", feed.Items[3].Title)
-	assert.Equal(t, "テスト1D", feed.Items[3].Description)
+	testcases := []struct {
+		path  string
+		title string
+		desc  string
+	}{
+		{
+			path:  "./_files/5/",
+			title: "テスト5",
+			desc:  "テスト5D",
+		},
+		{
+			path:  "./_files/4/",
+			title: "テスト4",
+			desc:  "テスト4D",
+		},
+		{
+			path:  "./est",
+			title: "テスト2",
+			desc:  "",
+		},
+		{
+			path:  "./_files/01/",
+			title: "テスト1",
+			desc:  "テスト1D",
+		},
+	}
+	for index, tt := range testcases {
+		t.Run(tt.title, func(t *testing.T) {
+			abspath, _ := resolveRelativeURI(testUrl, tt.path)
+			assert.Equal(t, generateHashedHex(abspath), feed.Items[index].Id)
+			assert.Equal(t, abspath, feed.Items[index].Link.Href)
+			assert.Equal(t, tt.title, feed.Items[index].Title)
+			assert.Equal(t, tt.desc, feed.Items[index].Description)
+		})
+	}
 
 	assert.Panics(t, func() { _ = feed.Items[4].Title })
 }

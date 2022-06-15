@@ -55,21 +55,39 @@ func TestRide(t *testing.T) {
 	assert.Equal(t, "テスト名", feed.Author.Name)
 	assert.Equal(t, "テスト内容", feed.Description)
 
-	assert.Equal(t, "3f0cbc9dce91157284cc751df185e7b5", feed.Items[0].Id)
-	assert.Equal(t, "https://www.example.com/episode4", feed.Items[0].Link.Href)
-	assert.Equal(t, "テスト4", feed.Items[0].Title)
+	testcases := []struct {
+		path  string
+		hash  string
+		title string
+	}{
+		{
+			title: "テスト4",
+			hash:  "3f0cbc9dce91157284cc751df185e7b5",
+			path:  "https://www.example.com/episode4",
+		},
+		{
+			title: "テスト3",
+			hash:  "38bf86656cb26e37f01562466369422f",
+			path:  "https://www.example.com/episode3",
+		},
+		{
+			title: "テスト2",
+			hash:  "429f57c494cdc837398855fdc0e8d6d4",
+			path:  "https://www.example.com/episode2",
+		},
+		{
+			title: "テスト1",
+			hash:  "60221f61ce824b808cb5b598b1e10aa4",
+			path:  "https://www.example.com/episode1",
+		},
+	}
 
-	assert.Equal(t, "38bf86656cb26e37f01562466369422f", feed.Items[1].Id)
-	assert.Equal(t, "https://www.example.com/episode3", feed.Items[1].Link.Href)
-	assert.Equal(t, "テスト3", feed.Items[1].Title)
-
-	assert.Equal(t, "429f57c494cdc837398855fdc0e8d6d4", feed.Items[2].Id)
-	assert.Equal(t, "https://www.example.com/episode2", feed.Items[2].Link.Href)
-	assert.Equal(t, "テスト2", feed.Items[2].Title)
-
-	assert.Equal(t, "60221f61ce824b808cb5b598b1e10aa4", feed.Items[3].Id)
-	assert.Equal(t, "https://www.example.com/episode1", feed.Items[3].Link.Href)
-	assert.Equal(t, "テスト1", feed.Items[3].Title)
-
+	for index, tt := range testcases {
+		t.Run(tt.title, func(t *testing.T) {
+			assert.Equal(t, tt.hash, feed.Items[index].Id)
+			assert.Equal(t, tt.path, feed.Items[index].Link.Href)
+			assert.Equal(t, tt.title, feed.Items[index].Title)
+		})
+	}
 	assert.Panics(t, func() { _ = feed.Items[4].Title })
 }

@@ -55,24 +55,37 @@ func TestStoria(t *testing.T) {
 	assert.Equal(t, "テストてすとストーリー", feed.Description)
 	assert.Equal(t, "テスト名", feed.Author.Name)
 
-	abspath, _ := resolveRelativeURI(testUrl, "./_files/5/")
-	absimg, _ := resolveRelativeURI(testUrl, "./_img/5.jpg")
-	assert.Equal(t, generateHashedHex(abspath), feed.Items[0].Id)
-	assert.Equal(t, abspath, feed.Items[0].Link.Href)
-	assert.Equal(t, absimg, feed.Items[0].Enclosure.Url)
-	assert.Equal(t, "テスト5", feed.Items[0].Title)
-
-	abspath, _ = resolveRelativeURI(testUrl, "./est#comics")
-	assert.Equal(t, generateHashedHex(abspath), feed.Items[1].Id)
-	assert.Equal(t, abspath, feed.Items[1].Link.Href)
-	assert.Equal(t, "テスト2", feed.Items[1].Title)
-
-	abspath, _ = resolveRelativeURI(testUrl, "./_files/01/")
-	absimg, _ = resolveRelativeURI(testUrl, "./_img/1.jpg")
-	assert.Equal(t, generateHashedHex(abspath), feed.Items[2].Id)
-	assert.Equal(t, abspath, feed.Items[2].Link.Href)
-	assert.Equal(t, absimg, feed.Items[2].Enclosure.Url)
-	assert.Equal(t, "テスト1", feed.Items[2].Title)
+	testcases := []struct {
+		path  string
+		thumb string
+		title string
+	}{
+		{
+			path:  "./_files/5/",
+			thumb: "./_img/5.jpg",
+			title: "テスト5",
+		},
+		{
+			path:  "./est#comics",
+			thumb: "../../path_t/_files/5/",
+			title: "テスト2",
+		},
+		{
+			path:  "./_files/01/",
+			thumb: "./_img/1.jpg",
+			title: "テスト1",
+		},
+	}
+	for index, tt := range testcases {
+		t.Run(tt.title, func(t *testing.T) {
+			abspath, _ := resolveRelativeURI(testUrl, tt.path)
+			absimg, _ := resolveRelativeURI(testUrl, tt.thumb)
+			assert.Equal(t, generateHashedHex(abspath), feed.Items[index].Id)
+			assert.Equal(t, abspath, feed.Items[index].Link.Href)
+			assert.Equal(t, absimg, feed.Items[index].Enclosure.Url)
+			assert.Equal(t, tt.title, feed.Items[index].Title)
+		})
+	}
 
 	assert.Panics(t, func() { _ = feed.Items[3].Title })
 }
