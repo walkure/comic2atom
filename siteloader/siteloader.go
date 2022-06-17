@@ -41,6 +41,10 @@ func GetFeed(target string) (string, *feeds.Feed, error) {
 		return valkyrieFeed(uri)
 	}
 
+	if strings.HasPrefix(target, "https://ncode.syosetu.com/") {
+		return narouFeed(uri)
+	}
+
 	return "", nil, fmt.Errorf("%s not supported site", target)
 }
 
