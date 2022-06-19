@@ -36,7 +36,6 @@ func narouFeed(target *url.URL) (string, *feeds.Feed, error) {
 		Link:        &feeds.Link{Href: target.String()},
 		Description: trimDescription(desc),
 		Author:      &feeds.Author{Name: author},
-		Created:     time.Now(),
 	}
 
 	chapter := ""
@@ -84,6 +83,9 @@ func narouFeed(target *url.URL) (string, *feeds.Feed, error) {
 				return false
 			}
 			it.Created = parsed
+			if parsed.After(feed.Updated) {
+				feed.Updated = parsed
+			}
 
 			updated, ok := s.Find("dt > span").Attr("title")
 			if ok {
@@ -93,6 +95,9 @@ func narouFeed(target *url.URL) (string, *feeds.Feed, error) {
 					return false
 				}
 				it.Updated = parsed
+				if parsed.After(feed.Updated) {
+					feed.Updated = parsed
+				}
 			}
 
 			feed.Items = append(feed.Items, it)

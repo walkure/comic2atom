@@ -38,6 +38,10 @@ func TestNarou(t *testing.T) {
 	assert.Equal(t, "テスト著者", feed.Author.Name)
 	assert.Equal(t, "テストてすとストーリー", feed.Description)
 
+	feedWantUpdated := parseTestDate(t, "2022-05-28 11:12:00 (JST)")
+	assert.True(t, feedWantUpdated.Equal(feed.Updated),
+		"(feed updated)want %v,got %v", feedWantUpdated, feed.Updated)
+
 	testcases := []struct {
 		path    string
 		title   string
