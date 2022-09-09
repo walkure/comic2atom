@@ -1,0 +1,11 @@
+# /etc/systemd/system/comic2atom.service
+[Unit]
+Description=comic2atom generator
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/comic2atom -list /usr/local/etc/comic2atom.cfg -atom /var/www/atom/
+
+[Install]
+WantedBy=multi-user.target
+
