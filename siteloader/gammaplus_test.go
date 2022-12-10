@@ -63,22 +63,18 @@ func TestGammaPlus(t *testing.T) {
 		{
 			path:  "./_files/5/",
 			title: "テスト5",
-			desc:  "テスト5D",
 		},
 		{
 			path:  "./_files/4/",
 			title: "テスト4",
-			desc:  "テスト4D",
 		},
 		{
-			path:  "./est",
+			path:  "./est#comics",
 			title: "テスト2",
-			desc:  "",
 		},
 		{
 			path:  "./_files/01/",
 			title: "テスト1",
-			desc:  "テスト1D",
 		},
 	}
 	for index, tt := range testcases {
@@ -87,7 +83,6 @@ func TestGammaPlus(t *testing.T) {
 			assert.Equal(t, generateHashedHex(abspath), feed.Items[index].Id)
 			assert.Equal(t, abspath, feed.Items[index].Link.Href)
 			assert.Equal(t, tt.title, feed.Items[index].Title)
-			assert.Equal(t, tt.desc, feed.Items[index].Description)
 		})
 	}
 
