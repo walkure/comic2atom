@@ -26,7 +26,7 @@ func gammaPlusFeed(target *url.URL) (string, *feeds.Feed, error) {
 	}
 	desc := trimDescription(doc.Find("#top > div > article > section:nth-child(3) > div > div.detail__area > div:nth-child(1) > p:nth-child(3)").Text())
 
-	episodes := doc.Find("#top > div > article > section:nth-child(4) > div > div.read__area > div.read__outer")
+	episodes := doc.Find("div.read__outer")
 
 	feed := &feeds.Feed{
 		Title:       title,
