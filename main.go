@@ -50,8 +50,17 @@ func main() {
 		fmt.Printf("no target found from args(%s) nor list(%s)", *targets, *list)
 	}
 
+	errored := false
 	for _, target := range targetUris {
-		processTarget(target, *atomPathPrefix)
+		err := processTarget(target, *atomPathPrefix)
+		if err != nil {
+			fmt.Printf("Error:%v\n", err)
+			errored = true
+		}
+	}
+
+	if errored {
+		os.Exit(255)
 	}
 }
 
@@ -79,30 +88,31 @@ func loadList(listPath string) ([]string, error) {
 
 }
 
-func processTarget(targetUri, pathPrefix string) {
+func processTarget(targetUri, pathPrefix string) error {
 
 	fmt.Printf("Fetch %s ", targetUri)
 
 	fname, feed, err := siteloader.GetFeed(targetUri)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	atomData, err := feed.ToAtom()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	atomPath := filepath.Join(pathPrefix, "/", fname+".atom")
 
 	file, err := os.OpenFile(atomPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	file.WriteString(atomData)
 	file.Close()
 
 	fmt.Printf("-> %s\n", atomPath)
+	return nil
 }
