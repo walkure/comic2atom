@@ -10,6 +10,10 @@ Atomファイルを吐いてくれないWebコミックサイト等をスクレ�
 
 取得先URLは、`-targets`で書き連ねるのと`-list`でリストファイル(1URI毎に1行)を渡すのと両方対応(片方だけでも良い)しています。
 
+### Docker
+
+`docker run --rm -it --mount type=bind,source=/path/to/output,target=/output ghcr.io/walkure/comic2atom:latest -targets "https://site1/contents1,https://site1/contents2" -atom /data/`
+
 ## supported sites
 
 公式でtopic単位のAtomとかRSSを吐いてくれればいいんですけどね…。
@@ -24,7 +28,7 @@ Atomファイルを吐いてくれないWebコミックサイト等をスクレ�
 - 毎週火・金
   - [コミックヴァルキリー](https://www.comic-valkyrie.com/)
 - 随時
-   - [小説家になろう](https://syosetu.com/)
+  - [小説家になろう](https://syosetu.com/)
 
 ※ 自分が見たいとこだけ試したので、サイトで提供されてる全部のコンテンツで確実に動くわけではないです。
 
