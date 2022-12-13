@@ -11,8 +11,13 @@ RUN CGO_ENABLED=0 GOOS=linux go build
 FROM scratch as runner
 
 WORKDIR /app
-COPY --from=builder /etc/passwd /etc/group /etc/localtime /etc/
+COPY --from=builder /etc/passwd /etc/group /etc/
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+# Program requries `Asia/Tokyo`.
+COPY --from=builder /etc/localtime /usr/share/zoneinfo/Asia/Tokyo
+# For logging .
+ENV TZ=Asia/Tokyo
 
 USER nonroot
 COPY --chown=nonroot:nonroot --from=builder  /app/comic2atom /app/
