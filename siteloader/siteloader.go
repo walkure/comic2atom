@@ -45,6 +45,10 @@ func GetFeed(target string) (string, *feeds.Feed, error) {
 		return narouFeed(uri)
 	}
 
+	if strings.HasPrefix(target, "https://kakuyomu.jp/works/") {
+		return kakuyomuFeed(uri)
+	}
+
 	return "", nil, fmt.Errorf("%s not supported site", target)
 }
 
@@ -85,7 +89,13 @@ func resolveRelativeURI(baseUri *url.URL, relative string) (string, error) {
 func fetchDocument(target *url.URL) (*goquery.Document, error) {
 
 	// HTTP Get
-	res, err := http.Get(target.String())
+	req, err := http.NewRequest("GET", target.String(), nil)
+	if err != nil {
+		return nil, fmt.Errorf("cannot generate request:%w", err)
+	}
+	req.Header.Set("User-Agent", "Saitama")
+
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("HTTP/GET error:%w", err)
 	}
