@@ -1,0 +1,132 @@
+syntax = "proto3";
+package ComicFuz;
+option go_package = "./;siteloader";
+
+// request
+message DeviceInfo {
+  enum DeviceType {
+    IOS = 0;
+    ANDROID = 1;
+    BROWSER = 2;
+  }
+  DeviceType deviceType = 3;
+}
+
+message MangaDetailRequest {
+  optional DeviceInfo deviceInfo = 1;
+  optional uint32 mangaId = 2;
+}
+
+//response
+message MangaDetailResponse {
+  message Tag {
+    uint32 id = 1;
+    string name = 2;
+  }
+
+  message Sns {
+    string body = 1;
+    string url = 2;
+  }
+  message UserPoint {
+    uint32 event = 1;
+    uint32 paid = 2;
+  }
+
+  message ViewButton {
+    Chapter chapter = 1;
+    string buttonTitle = 2;
+  }
+
+  UserPoint userPoint = 1;
+  Manga manga = 2;
+  repeated ChapterGroup chapters = 3;
+  repeated Authorship authorship = 4;
+  string nextUpdateInfo = 5;
+  bool isFavorite = 6;
+  repeated Tag tags = 7;
+  Sns sns = 8;
+  ViewButton viewButton = 9;
+  bool isCommentEnabled = 10;
+  string rewardUrl = 11;
+}
+
+
+message Manga {
+  enum Badge {
+    NONE = 0;
+    NEW = 1;
+    UPDATE = 2;
+  }
+  uint32 mangaId = 1;
+  string mangaName = 2;
+  string mangaNameKana = 3;
+  string mainThumbnailUrl = 4;
+  string singleListThumbnailUrl = 5;
+  string shortDescription = 6;
+  string campaign = 7;
+  uint32 numberOfTotalChapterLikes = 8;
+  uint32 numberOfFavorites = 9;
+  Badge badge = 10;
+  bool isTicketAvailable = 12;
+  bool isChargeNeeded = 13;
+  string longDescription = 14;
+  string latestUpdatedDate = 15;
+  bool isFavorite = 16;
+}
+
+message Authorship {
+  message Author{
+    uint32 authorId = 1;
+    string authorName = 2;
+    string authorNameKana = 3;
+    string imageUrl = 4;
+    bool isYellEnabled = 5;
+    bool isYellBonusOffered = 6;
+  }
+  repeated Author author = 1;
+  string role = 2;
+}
+
+message ChapterGroup {
+  message BookIssueHeader {
+    string bookIssueId = 1;
+    string headerImageUrl = 2;
+    string text = 3;
+    string publishedDate = 4;
+    string campaign = 5;
+  }
+  BookIssueHeader bookIssueHeader = 1;
+  repeated Chapter chapters = 2;
+}
+
+message Chapter {
+  message PointConsumption {
+    enum Type {
+      ANY_ITEMS = 0;
+      EVENT_OR_PAID = 1;
+      PAID_ONLY = 2;
+    }
+    Type type = 1;
+    uint32 amount = 2;
+  }
+  enum Badge {
+    NONE = 0;
+    UPDATE = 1;
+    ADVANCE = 2;
+    SPECIAL = 3;
+  }
+  uint32 chapterId = 1;
+  string chapterMainName = 2;
+  string chapterSubName = 3;
+  string thumbnailUrl = 4;
+  PointConsumption pointConsumption = 5;
+  uint32 numberOfComments = 6;
+  uint32 numberOfLikes = 7;
+  string updatedDate = 8;
+  bool isRead = 9;
+  string endOfRentalPeriod = 10;
+  string firstPageImageUrl = 11;
+  Badge badge = 12;
+}
+

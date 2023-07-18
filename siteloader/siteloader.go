@@ -49,6 +49,10 @@ func GetFeed(target string) (string, *feeds.Feed, error) {
 		return kakuyomuFeed(uri)
 	}
 
+	if strings.HasPrefix(target, "https://comic-fuz.com/manga/") {
+		return fuzFeed(uri)
+	}
+
 	return "", nil, fmt.Errorf("%s not supported site", target)
 }
 
