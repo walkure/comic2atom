@@ -1,9 +1,11 @@
 package siteloader
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/url"
+	"sort"
 	"strings"
 	"time"
 
@@ -11,27 +13,101 @@ import (
 	"github.com/gorilla/feeds"
 )
 
+func getKakuyomuWorkId(target *url.URL) (string, error) {
+	path := target.Path
+	if strings.HasSuffix(path, "/") {
+		path = path[:len(path)-1]
+	}
+	paths := strings.Split(path, "/")
+	if len(paths) < 2 {
+		return "", errors.New("invalid path")
+	}
+	return paths[len(paths)-1], nil
+}
+
+func getTimFromObj(i interface{}) (time.Time, error) {
+
+	if i == nil {
+		return time.Time{}, errors.New("date is nil")
+	}
+
+	t, ok := i.(string)
+	if !ok {
+		return time.Time{}, errors.New("invalid date type")
+	}
+
+	return time.Parse(time.RFC3339, t)
+}
+
 func kakuyomuFeed(target *url.URL) (string, *feeds.Feed, error) {
 	doc, err := fetchDocument(target)
 	if err != nil {
 		return "", nil, fmt.Errorf("kakuyomu:FetchErr:%w", err)
 	}
 
-	title := doc.Find("#workTitle > a").Text()
-	if title == "" {
-		return "", nil, errors.New("kakuyomu:title not found")
+	script := doc.Find("script#__NEXT_DATA__").Text()
+	if script == "" {
+		return "", nil, errors.New("kakuyomu:__NEXT_DATA__ not found")
 	}
 
-	author := doc.Find("#workAuthor-activityName > a").Text()
-	if title == "" {
-		return "", nil, errors.New("kakuyomu:author not found")
+	var kakuyomuNextData struct {
+		Props struct {
+			PageProps struct {
+				ApolloState map[string]interface{} `json:"__APOLLO_STATE__"`
+			} `json:"pageProps"`
+		} `json:"props"`
 	}
 
-	desc := trimDescription(doc.Find("#introduction").Text())
+	if err := json.Unmarshal([]byte(script), &kakuyomuNextData); err != nil {
+		return "", nil, fmt.Errorf("kakuyomu:__NEXT_DATA__ parse error %w", err)
+	}
 
-	updated, err := parseDatetimeEntity(doc.Find("p.widget-toc-date > time"))
+	if kakuyomuNextData.Props.PageProps.ApolloState == nil {
+		return "", nil, errors.New("kakuyomu:__APOLLO_STATE__ not found")
+	}
+
+	storyId, err := getKakuyomuWorkId(target)
 	if err != nil {
-		return "", nil, fmt.Errorf("kakuyomu:toc-date parse error %w", err)
+		return "", nil, fmt.Errorf("kakuyomu:workId parse error %w", err)
+	}
+
+	authorWork, ok := kakuyomuNextData.Props.PageProps.ApolloState["Work:"+storyId].(map[string]interface{})
+	if !ok {
+		return "", nil, errors.New("kakuyomu:work(author) not found")
+	}
+
+	title, ok := authorWork["title"].(string)
+	if !ok {
+		return "", nil, errors.New("kakuyomu:title not found or broken type")
+	}
+
+	updated, err := getTimFromObj(authorWork["lastEpisodePublishedAt"])
+	if err != nil {
+		return "", nil, fmt.Errorf("kakuyomu:lastEpisodePublishedAt not found or broken %w", err)
+	}
+
+	desc, ok := authorWork["introduction"].(string)
+	if !ok {
+		return "", nil, errors.New("kakuyomu:introduction not found or broken type")
+	}
+
+	desc = trimDescription(desc)
+
+	authorRef, ok := authorWork["author"].(map[string]interface{})
+	if !ok {
+		return "", nil, errors.New("kakuyomu:authorRef not found or broken type")
+	}
+	authorRefId, ok := authorRef["__ref"].(string)
+	if !ok {
+		return "", nil, errors.New("kakuyomu:authorRefId not found or broken type")
+	}
+	authorAccount, ok := kakuyomuNextData.Props.PageProps.ApolloState[authorRefId].(map[string]interface{})
+	if !ok {
+		return "", nil, errors.New("kakuyomu:UserAccount(author) not found or broken type")
+	}
+	author, ok := authorAccount["activityName"].(string)
+	if !ok {
+		return "", nil, errors.New("kakuyomu:ActivityName not found or broken type")
 	}
 
 	feed := &feeds.Feed{
@@ -42,35 +118,50 @@ func kakuyomuFeed(target *url.URL) (string, *feeds.Feed, error) {
 		Updated:     updated,
 	}
 
-	doc.Find("#table-of-contents > section > div > ol > li").Each(func(i int, s *goquery.Selection) {
-		title := strings.TrimSpace(s.Find("span").Text())
-		if title == "" {
-			return
+	for _, v := range kakuyomuNextData.Props.PageProps.ApolloState {
+		if v == nil {
+			continue
 		}
-
-		published, err := parseDatetimeEntity(s.Find("time"))
-		if err != nil {
-			return
-		}
-
-		href, ok := s.Find("a").Attr("href")
+		it, ok := v.(map[string]interface{})
 		if !ok {
-			return
+			continue
 		}
+		if it["__typename"] == "Episode" {
 
-		uri, _ := resolveRelativeURI(target, href)
+			id, ok := it["id"].(string)
+			if !ok {
+				continue
+			}
 
-		feed.Items = append(feed.Items, &feeds.Item{
-			Title:   title,
-			Link:    &feeds.Link{Href: uri},
-			Id:      generateHashedHex(uri),
-			Created: published,
-		})
-	})
+			title, ok := it["title"].(string)
+			if !ok {
+				continue
+			}
+
+			publishedAt, err := getTimFromObj(it["publishedAt"])
+			if err != nil {
+				continue
+			}
+
+			uri := fmt.Sprintf("%s/episodes/%s", target.String(), id)
+
+			feed.Items = append(feed.Items, &feeds.Item{
+				Title:   title,
+				Link:    &feeds.Link{Href: uri},
+				Id:      id,
+				Created: publishedAt,
+			})
+
+		}
+	}
 
 	if len(feed.Items) == 0 {
 		return "", nil, fmt.Errorf("kakuyomu:no episode entry")
 	}
+
+	sort.Slice(feed.Items, func(i, j int) bool {
+		return feed.Items[i].Created.Before(feed.Items[j].Created)
+	})
 
 	return "kakuyomu_" + escapePath(target.Path), feed, nil
 }

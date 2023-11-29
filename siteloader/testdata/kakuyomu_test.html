@@ -1,163 +1,86 @@
 <!DOCTYPE html>
-<html lang="ja" data-route="public:works:work" data-is-guest="1" data-env="production">
-<head>
-    <title></title>
-</head>
-
-<body id="page-works-work" class="wrapper isPC">
-    <div id="container">
-        <div id="container-inner">
-            <div id="work" class="" itemscope itemtype="https://schema.org/CreativeWork">
-                <header id="workHeader">
-                    <div id="workHeader-inner">
-                        <h1 id="workTitle"><a href="/works/123456">テストタイトル</a></h1>
-                        <h2 id="workAuthor">
-                            <span id="workAuthor-activityName"><a href="/users/test-author">テスト著者</a></span>
-                        </h2>
-                    </div>
-                </header>
-                <main id="workMain">
-
-                        <p id="introduction" class="ui-truncateTextButton js-work-introduction">テスト<br />
-                            てすと<br />
-                            ストーリー<br />
-                        </p>
-                    </section>
-                    <div id="table-of-contents">
-                        <section class="widget-toc">
-                            <header>
-                                <h3 class="heading-level2">目次</h3>
-
-                                <div class="widget-toc-workInfo js-chrome-visibility-fix">
-                                    <p class="widget-toc-date"><time datetime="2023-05-18T07:17:12Z"><span>2023年5月18日
-                                                16:17</span></time> 更新</p>
-                                </div>
-                            </header>
-                            <div class="widget-toc-main">
-                                <ol class="widget-toc-items test-toc-items">
-                                    <li class="widget-toc-chapter widget-toc-level1 js-vertical-composition-item">
-                                        <span>第一章</span>
-                                    </li>
-                                    <li class="widget-toc-episode">
-                                        <a href="/works/999999999/episodes/1111111"
-                                            class="widget-toc-episode-episodeTitle">
-                                            <span
-                                                class="widget-toc-episode-titleLabel js-vertical-composition-item">第1話</span>
-                                            <time class="widget-toc-episode-datePublished"
-                                                datetime="2020-10-09T06:13:22Z">2020年10月9日</time>
-                                        </a>
-                                    </li>
-
-                                    <li class="widget-toc-episode">
-                                        <a href="/works/999999999/episodes/2222222"
-                                            class="widget-toc-episode-episodeTitle">
-                                            <span class="widget-toc-episode-titleLabel js-vertical-composition-item">
-                                                第2話</span>
-                                            <time class="widget-toc-episode-datePublished"
-                                                datetime="2020-10-24T23:41:18Z">2020年10月25日</time>
-                                        </a>
-                                    </li>
-                                    <li class="widget-toc-episode">
-                                        <a href="/works/999999999/episodes/3333333"
-                                            class="widget-toc-episode-episodeTitle">
-                                            <span
-                                                class="widget-toc-episode-titleLabel js-vertical-composition-item">第3話</span>
-                                            <time class="widget-toc-episode-datePublished"
-                                                datetime="2021-01-16T22:00:06Z">2021年1月17日</time>
-                                        </a>
-                                    </li>
-                                    <li class="widget-toc-chapter widget-toc-level1 js-vertical-composition-item">
-                                        <span>第二章</span>
-                                    </li>
-                                    <li class="widget-toc-episode">
-                                        <a href="/works/999999999/episodes/4444444"
-                                            class="widget-toc-episode-episodeTitle">
-                                            <span
-                                                class="widget-toc-episode-titleLabel js-vertical-composition-item">第4話</span>
-                                            <time class="widget-toc-episode-datePublished"
-                                                datetime="2021-01-17T22:00:02Z">2021年1月18日</time>
-                                        </a>
-                                    </li>
-                                    <li class="widget-toc-episode">
-                                        <a href="/works/999999999/episodes/5555555"
-                                            class="widget-toc-episode-episodeTitle">
-                                            <span
-                                                class="widget-toc-episode-titleLabel js-vertical-composition-item">第5話</span>
-                                            <time class="widget-toc-episode-datePublished"
-                                                datetime="2023-05-13T07:17:24Z">2023年5月13日</time>
-                                        </a>
-                                    </li>
-                                </ol>
-                            </div>
-                        </section>
-
-                    </div>
-
-                    <section id="work-information" class="internalLinks-target">
-                        <h3 class="heading-underline"><span class="heading-level2">小説情報</span></h3>
-                        <header>
-                            <h4 class="heading-level5" itemprop="name"><a
-                                    href="/works/999999999">【580万PV突破】転生皇子が原作知識で世界最強</a></h4>
-                            <h5 class="heading-level5"><a href="/users/AINO-JIN">
-                                    <span class="activityName" itemprop="author">相野仁</span>
-                                    <span class="screenName notSet-penName">@AINO-JIN</span>
-                                </a></h5>
-                        </header>
-                        <div id="work-information-main">
-                            <div id="workInformationList">
-                                <dl class="widget-credit">
-                                    <dt><span>執筆状況</span></dt>
-                                    <dd>連載中</dd>
-                                    <dt><span>エピソード</span></dt>
-                                    <dd>183話</dd>
-                                    <dt><span>種類</span></dt>
-                                    <dd><span>オリジナル小説</span></dd>
-
-                                    <dt><span>ジャンル</span></dt>
-                                    <dd itemprop="genre"><a href="/genres/fantasy/recent_works">異世界ファンタジー</a></dd>
-                                    <dt><span>セルフレイティング</span></dt>
-                                    <dd>
-                                        <span itemprop="contentRating">残酷描写有り</span>
-                                        <span itemprop="contentRating">暴力描写有り</span>
-                                    </dd>
-                                    <dt id="tag"><span>タグ</span></dt>
-                                    <dd>
-                                        <span itemprop="keywords"><a
-                                                href="/tags/%E8%84%87%E5%BD%B9%E4%B8%BB%E4%BA%BA%E5%85%AC">脇役主人公</a></span>
-                                        <span itemprop="keywords"><a
-                                                href="/tags/%E4%B8%8D%E9%81%87%E3%81%8B%E3%82%89%E9%80%86%E8%BB%A2">不遇から逆転</a></span>
-                                        <span itemprop="keywords"><a href="/tags/%E4%BF%BASUGEE">俺SUGEE</a></span>
-                                        <span itemprop="keywords"><a
-                                                href="/tags/%E7%95%B0%E4%B8%96%E7%95%8C%E8%BB%A2%E7%94%9F">異世界転生</a></span>
-                                        <span itemprop="keywords"><a
-                                                href="/tags/%E6%88%90%E3%82%8A%E4%B8%8A%E3%81%8C%E3%82%8A">成り上がり</a></span>
-                                        <span itemprop="keywords"><a
-                                                href="/tags/%E3%82%B1%E3%83%A2%E8%80%B3%E3%83%A1%E3%82%A4%E3%83%89">ケモ耳メイド</a></span>
-                                        <span itemprop="keywords"><a
-                                                href="/tags/%E3%83%8F%E3%83%BC%E3%83%AC%E3%83%A0%E8%A6%81%E7%B4%A0">ハーレム要素</a></span>
-                                        <span itemprop="keywords"><a
-                                                href="/tags/%E6%BC%AB%E7%94%BB%E9%80%A3%E8%BC%89%E9%96%8B%E5%A7%8B">漫画連載開始</a></span>
-                                    </dd>
-                                    <dt><span>総文字数</span></dt>
-                                    <dd>196,165文字</dd>
-                                    <dt><span>公開日</span></dt>
-                                    <dd><time itemprop="datePublished" datetime="2020-10-09T06:13:22Z">2020年10月9日
-                                            15:13</time></dd>
-                                    <dt><span>最終更新日</span></dt>
-                                    <dd><time itemprop="dateModified" datetime="2023-05-18T07:17:12Z">2023年5月18日
-                                            16:17</time></dd>
-                                </dl>
-                                <p><a href="/works/999999999/accesses">アクセス数 <i
-                                            class="icon-next-large"></i></a></p>
-                            </div>
-
-                        </div>
-                    </section>
-
-                </main>
-            </div>
-        </div>
-    </div>
+<html lang="ja">
+<bodt>
+    <script id="__NEXT_DATA__" type="application/json">
+{
+    "props": {
+        "pageProps": {
+            "__REDUX_STATE__": {
+                "tier": "regular",
+                "platform": "web"
+            },
+            "__APOLLO_STATE__": {
+                "UserAccount:1234567890": {
+                    "__typename": "UserAccount",
+                    "id": "1234567890",
+                    "publicationLabel": null,
+                    "activityName": "テスト著者"
+                },
+                "Episode:1111111": {
+                    "__typename": "Episode",
+                    "id": "1111111",
+                    "title": "第1話",
+                    "publishedAt": "2020-10-09T06:13:22Z"
+                },
+                "Work:54649285694857490534534": {
+                    "__typename": "Work",
+                    "id": "54649285694857490534534",
+                    "author": {
+                        "__ref": "UserAccount:594357439547980590709485"
+                    },
+                    "title": "ダミー作品1",
+                    "publishedAt": "2018-08-24T23:18:41Z",
+                    "lastEpisodePublishedAt": "2018-08-24T23:31:06Z"
+                },
+                "Work:8977984230948972": {
+                    "__typename": "Work",
+                    "id": "8977984230948972",
+                    "catchphrase": "ダミー作品2",
+                    "author": {
+                        "__ref": "UserAccount:57890435957390877890"
+                    }
+                },
+                "Episode:2222222": {
+                    "__typename": "Episode",
+                    "id": "2222222",
+                    "title": "第2話",
+                    "publishedAt": "2020-10-24T23:41:18Z"
+                },
+                "Episode:3333333": {
+                    "__typename": "Episode",
+                    "id": "3333333",
+                    "title": "第3話",
+                    "publishedAt": "2021-01-16T22:00:06Z"
+                },
+                "Episode:4444444": {
+                    "__typename": "Episode",
+                    "id": "4444444",
+                    "title": "第4話",
+                    "publishedAt": "2021-01-17T22:00:02Z"
+                },
+                "Episode:5555555": {
+                    "__typename": "Episode",
+                    "id": "5555555",
+                    "title": "第5話",
+                    "publishedAt": "2023-05-13T07:17:24Z"
+                },
+                "Work:987654321": {
+                    "__typename": "Work",
+                    "id": "987654321",
+                    "author": {
+                        "__ref": "UserAccount:1234567890"
+                    },
+                    "editedAt": "2023-09-30T11:55:12Z",
+                    "title": "テストタイトル",
+                    "publishedAt": "2020-10-09T06:13:22Z",
+                    "introduction": "テスト\nてすと\nストーリー",
+                    "lastEpisodePublishedAt": "2023-09-30T10:25:58Z"
+                }
+            }
+        }
+    }
+}
+    </script>
 </body>
 
 </html>
