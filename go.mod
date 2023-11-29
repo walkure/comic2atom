@@ -1,6 +1,8 @@
 module github.com/walkure/comic2atom
 
-go 1.20
+go 1.21
+
+toolchain go1.21.4
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.0
