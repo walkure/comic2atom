@@ -14,7 +14,14 @@ import (
 
 func TestNarou(t *testing.T) {
 	var exampleHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		f, err := os.Open("./testdata/narou_test.html")
+
+		fn := "./testdata/narou_test_p1.html"
+
+		if r.URL.Query().Get("p") != "" {
+			fn = "./testdata/narou_test_p2.html"
+		}
+
+		f, err := os.Open(fn)
 		if err != nil {
 			t.Fatalf("Cannot load test file:%v", err)
 		}
