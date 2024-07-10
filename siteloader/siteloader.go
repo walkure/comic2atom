@@ -53,6 +53,10 @@ func GetFeed(target string) (string, *feeds.Feed, error) {
 		return fuzFeed(uri)
 	}
 
+	if strings.HasPrefix(target, "https://comic-walker.com/detail/") {
+		return comicwalkerFeed(uri)
+	}
+
 	return "", nil, fmt.Errorf("%s not supported site", target)
 }
 
