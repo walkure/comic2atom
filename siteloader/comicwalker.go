@@ -92,8 +92,6 @@ func comicwalkerFeed(target *url.URL) (string, *feeds.Feed, error) {
 		authors = append(authors, fmt.Sprintf("%s(%s)", a.Name, a.Role))
 	}
 
-	fmt.Printf("Authors:%s\n", strings.Join(authors, ", "))
-
 	feed := &feeds.Feed{
 		Title:       comicDetail.Data.Work.Title,
 		Link:        &feeds.Link{Href: fmt.Sprintf("https://comic-walker.com/detail/%s", walkerNextData.Props.PageProps.WorkCode)},
