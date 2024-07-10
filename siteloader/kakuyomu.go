@@ -6,24 +6,11 @@ import (
 	"fmt"
 	"net/url"
 	"sort"
-	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/feeds"
 )
-
-func getKakuyomuWorkId(target *url.URL) (string, error) {
-	path := target.Path
-	if strings.HasSuffix(path, "/") {
-		path = path[:len(path)-1]
-	}
-	paths := strings.Split(path, "/")
-	if len(paths) < 2 {
-		return "", errors.New("invalid path")
-	}
-	return paths[len(paths)-1], nil
-}
 
 func getTimFromObj(i interface{}) (time.Time, error) {
 
@@ -56,6 +43,9 @@ func kakuyomuFeed(target *url.URL) (string, *feeds.Feed, error) {
 				ApolloState map[string]interface{} `json:"__APOLLO_STATE__"`
 			} `json:"pageProps"`
 		} `json:"props"`
+		Query struct {
+			WorkID string `json:"workId"`
+		} `json:"query"`
 	}
 
 	if err := json.Unmarshal([]byte(script), &kakuyomuNextData); err != nil {
@@ -66,10 +56,7 @@ func kakuyomuFeed(target *url.URL) (string, *feeds.Feed, error) {
 		return "", nil, errors.New("kakuyomu:__APOLLO_STATE__ not found")
 	}
 
-	storyId, err := getKakuyomuWorkId(target)
-	if err != nil {
-		return "", nil, fmt.Errorf("kakuyomu:workId parse error %w", err)
-	}
+	storyId := kakuyomuNextData.Query.WorkID
 
 	authorWork, ok := kakuyomuNextData.Props.PageProps.ApolloState["Work:"+storyId].(map[string]interface{})
 	if !ok {
@@ -112,7 +99,7 @@ func kakuyomuFeed(target *url.URL) (string, *feeds.Feed, error) {
 
 	feed := &feeds.Feed{
 		Title:       title,
-		Link:        &feeds.Link{Href: target.String()},
+		Link:        &feeds.Link{Href: fmt.Sprintf("https://kakuyomu.jp/works/%s", storyId)},
 		Description: desc,
 		Author:      &feeds.Author{Name: author},
 		Updated:     updated,
@@ -143,7 +130,7 @@ func kakuyomuFeed(target *url.URL) (string, *feeds.Feed, error) {
 				continue
 			}
 
-			uri := fmt.Sprintf("%s/episodes/%s", target.String(), id)
+			uri := fmt.Sprintf("https://kakuyomu.jp/works/%s/episodes/%s", storyId, id)
 
 			feed.Items = append(feed.Items, &feeds.Item{
 				Title:   title,
@@ -163,7 +150,7 @@ func kakuyomuFeed(target *url.URL) (string, *feeds.Feed, error) {
 		return feed.Items[i].Created.Before(feed.Items[j].Created)
 	})
 
-	return "kakuyomu_" + escapePath(target.Path), feed, nil
+	return "kakuyomu_works" + storyId, feed, nil
 }
 
 func parseDatetimeEntity(datetime *goquery.Selection) (time.Time, error) {
