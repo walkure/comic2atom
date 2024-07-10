@@ -31,6 +31,7 @@ Atomファイルを吐いてくれないWebコミックサイト等をスクレ�
   - [小説家になろう](https://syosetu.com/)
   - [カクヨム](https://kakuyomu.jp/)
   - [COMIC FUZ](https://comic-fuz.com/)
+  - [カドコミ](https://comic-walker.com/)
 
 ※ 自分が見たいとこだけ試したので、サイトで提供されてる全部のコンテンツで確実に動くわけではないです。
 
