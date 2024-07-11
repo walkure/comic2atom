@@ -1,0 +1,41 @@
+name: 'build-and-push'
+description: 'Container build and push'
+inputs:
+  artifact:
+    description: 'Name of Artifact'
+    required: true
+  GITHUB_TOKEN:
+    description: 'GitHub Access Token'
+    required: true
+  dockefile:
+    description: 'Dockerfile Path'
+    required: true
+
+runs:
+  using: "Composite"
+  steps:
+  - name: Log in to the Container registry
+    uses: docker/login-action@v3.2.0
+    with:
+      registry: ${{ env.REGISTRY }}
+      username: ${{ github.actor }}
+      password: ${{ inputs.GITHUB_TOKEN }}
+
+  - name: Extract metadata (tags, labels) for Docker
+    id: meta
+    uses: docker/metadata-action@v5.5.1
+    with:
+      images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ inputs.artifact }}
+      tags: |
+        type=ref,event=branch
+        type=semver,pattern={{version}}
+        type=sha
+        type=raw,value=latest
+
+  - name: Build and push Docker image
+    uses: docker/build-push-action@v6.3.0
+    with:
+      file: ${{ inputs.dockefile }}
+      push: true
+      tags: ${{ steps.meta.outputs.tags }}
+      labels: ${{ steps.meta.outputs.labels }}

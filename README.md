@@ -12,7 +12,7 @@ Atomファイルを吐いてくれないWebコミックサイト等をスクレ�
 
 ### Docker
 
-`docker run --rm -it --mount type=bind,source=/path/to/output,target=/output ghcr.io/walkure/comic2atom:latest -targets "https://site1/contents1,https://site1/contents2" -atom /data/`
+`docker run --rm -it --mount type=bind,source=/path/to/output,target=/output ghcr.io/walkure/comic2atom/converter:latest -targets "https://site1/contents1,https://site1/contents2" -atom /data/`
 
 ## supported sites
 

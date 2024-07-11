@@ -5,16 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Package",
+            "name": "Launch Converter",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "main.go",
+            "program": "${workspaceFolder}/cmd/converter/main.go",
             "args":[
                 "-targets",
-                "https://storia.takeshobo.co.jp/manga/osi_stalker/,https://comic-meteor.jp/maotujinai/,https://gammaplus.takeshobo.co.jp/manga/kobito_recipe/,https://www.comicride.jp/book/slime/",
+                "https://comic-walker.com/detail/KC_001570_S?episodeType=first",
+                //"https://gammaplus.takeshobo.co.jp/manga/yukino_niiduma/,https://storia.takeshobo.co.jp/manga/kanojo_shoukan/,https://storia.takeshobo.co.jp/manga/maounomusume/,https://storia.takeshobo.co.jp/manga/osi_stalker/,https://comic-meteor.jp/aramama/,https://comic-meteor.jp/maotujinai/,https://ncode.syosetu.com/n5795hq/",
+                //"https://firecross.jp/ebook/series/281",
+                //"https://ncode.syosetu.com/n3992hp/",
+                //"https://www.comic-valkyrie.com/suteisiyusya/,https://www.comic-valkyrie.com/silverplan/",
+                //"https://kakuyomu.jp/works/1177354054918384601",
+                //"https://comic-fuz.com/manga/3354,https://comic-fuz.com/manga/3354?freeOnly,https://comic-fuz.com/manga/1900?freeOnly",
                 "-atom", 
                 "./"]
-        }
+        },
     ]
 }
