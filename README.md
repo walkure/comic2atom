@@ -4,15 +4,26 @@ Atomファイルを吐いてくれないWebコミックサイト等をスクレ�
 
 ## usage
 
+### converter
+
 適当なところにバイナリをおいて、`cron`とか`systemd.timer`で適当に起動。
 
 `comic2atom -targets https://site1/contents1,https://site1/contents2 -list /foo/bar/list -atom /var/www/atom`
 
 取得先URLは、`-targets`で書き連ねるのと`-list`でリストファイル(1URI毎に1行)を渡すのと両方対応(片方だけでも良い)しています。
 
+### proxy
+
+RSSリーダから到達できる適当なところで起動しておき、RSSリーダに登録するURIのprefixに当該proxyのURIをつける。
+
+e.g. `http://localhost:18080/entry/https://www.example.com/comic/1`
+
 ### Docker
 
 `docker run --rm -it --mount type=bind,source=/path/to/output,target=/output ghcr.io/walkure/comic2atom/converter:latest -targets "https://site1/contents1,https://site1/contents2" -atom /data/`
+
+`docker run --rm -it -p 18080:8080 ghcr.io/walkure/comic2atom/proxy:latest`
+
 
 ## supported sites
 
