@@ -34,8 +34,6 @@ e.g. `http://localhost:18080/entry/https://www.example.com/comic/1`
 - 毎週金曜更新
   - [ストーリアダッシュ](https://storia.takeshobo.co.jp/)
   - [ガンマぷらす](https://gammaplus.takeshobo.co.jp/)
-- ほぼ月～木
-  - [コミックライド](https://www.comicride.jp/)
 - 毎週火・金
   - [コミックヴァルキリー](https://www.comic-valkyrie.com/)
 - 随時

@@ -34,10 +34,6 @@ func GetFeed(ctx context.Context, target string) (string, *feeds.Feed, HttpMetad
 		return meteorFeed(ctx, uri)
 	}
 
-	if strings.HasPrefix(target, "https://www.comicride.jp/book/") {
-		return rideFeed(ctx, uri)
-	}
-
 	if strings.HasPrefix(target, "https://www.comic-valkyrie.com/") {
 		return valkyrieFeed(ctx, uri)
 	}
