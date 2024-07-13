@@ -12,15 +12,15 @@ import (
 	"github.com/gorilla/feeds"
 )
 
-func comicwalkerFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
-	doc, err := fetchDocument(ctx, target)
+func comicwalkerFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpMetadata, error) {
+	doc, metadata, err := fetchDocument(ctx, target)
 	if err != nil {
-		return "", nil, fmt.Errorf("comicwalker:FetchErr:%w", err)
+		return "", nil, metadata, fmt.Errorf("comicwalker:FetchErr:%w", err)
 	}
 
 	script := doc.Find("script#__NEXT_DATA__").Text()
 	if script == "" {
-		return "", nil, errors.New("comicwalker:__NEXT_DATA__ not found")
+		return "", nil, metadata, errors.New("comicwalker:__NEXT_DATA__ not found")
 	}
 
 	var walkerNextData struct {
@@ -35,16 +35,16 @@ func comicwalkerFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed,
 	}
 
 	if err := json.Unmarshal([]byte(script), &walkerNextData); err != nil {
-		return "", nil, fmt.Errorf("comicwalker:__NEXT_DATA__ parse error %w", err)
+		return "", nil, metadata, fmt.Errorf("comicwalker:__NEXT_DATA__ parse error %w", err)
 	}
 
 	if len(walkerNextData.Props.PageProps.DehydratedState.Queries) == 0 {
-		return "", nil, errors.New("comicwalker:Queries not found")
+		return "", nil, metadata, errors.New("comicwalker:Queries not found")
 	}
 
 	detailJSON, err := getComicDetailJSON(walkerNextData.Props.PageProps.DehydratedState.Queries)
 	if err != nil {
-		return "", nil, fmt.Errorf("comicwalker:DetailErr:%w", err)
+		return "", nil, metadata, fmt.Errorf("comicwalker:DetailErr:%w", err)
 	}
 
 	var comicDetail struct {
@@ -85,7 +85,7 @@ func comicwalkerFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed,
 	}
 
 	if err := json.Unmarshal(detailJSON, &comicDetail); err != nil {
-		return "", nil, fmt.Errorf("comicwalker:Detailed JSON parse error %w", err)
+		return "", nil, metadata, fmt.Errorf("comicwalker:Detailed JSON parse error %w", err)
 	}
 
 	authors := make([]string, 0, len(comicDetail.Data.Work.Authors))
@@ -114,7 +114,7 @@ func comicwalkerFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed,
 		feed.Updated = ep.UpdateDate
 	}
 
-	return "comicwalker_" + walkerNextData.Props.PageProps.WorkCode, feed, nil
+	return "comicwalker_" + walkerNextData.Props.PageProps.WorkCode, feed, metadata, nil
 }
 
 func getComicDetailJSON(data []map[string]interface{}) ([]byte, error) {

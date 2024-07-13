@@ -23,7 +23,7 @@ func TestGammaPlusErr(t *testing.T) {
 
 	testUrl, _ := url.Parse(testsv.URL)
 
-	fname, doc, err := gammaPlusFeed(context.Background(), testUrl)
+	fname, doc, _, err := gammaPlusFeed(context.Background(), testUrl)
 
 	assert.Error(t, err)
 	assert.Equal(t, "", fname)
@@ -45,7 +45,7 @@ func TestGammaPlus(t *testing.T) {
 
 	testUrl, _ := url.Parse(testsv.URL + "/path_t/est")
 
-	fname, feed, err := gammaPlusFeed(context.Background(), testUrl)
+	fname, feed, _, err := gammaPlusFeed(context.Background(), testUrl)
 	assert.Nil(t, err)
 	assert.Nil(t, err)
 

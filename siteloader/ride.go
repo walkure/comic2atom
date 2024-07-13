@@ -10,20 +10,20 @@ import (
 	"github.com/gorilla/feeds"
 )
 
-func rideFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
-	doc, err := fetchDocument(ctx, target)
+func rideFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpMetadata, error) {
+	doc, metadata, err := fetchDocument(ctx, target)
 	if err != nil {
-		return "", nil, fmt.Errorf("ride:FetchErr:%w", err)
+		return "", nil, metadata, fmt.Errorf("ride:FetchErr:%w", err)
 	}
 
 	title := doc.Find("body > div > main > div:nth-child(1) > div > div > div.p-detail-head__main > h1").Text()
 	if title == "" {
-		return "", nil, fmt.Errorf("ride:title not found")
+		return "", nil, metadata, fmt.Errorf("ride:title not found")
 	}
 
 	author := doc.Find("body > div > main > div:nth-child(1) > div > div > div.p-detail-head__main > p").Text()
 	if author == "" {
-		return "", nil, fmt.Errorf("ride:author not found")
+		return "", nil, metadata, fmt.Errorf("ride:author not found")
 	}
 
 	desc := trimDescription(doc.Find("body > div > main > div:nth-child(1) > div > p").Text())
@@ -49,8 +49,8 @@ func rideFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error)
 	})
 
 	if len(feed.Items) == 0 {
-		return "", nil, fmt.Errorf("ride:no episode entry")
+		return "", nil, metadata, fmt.Errorf("ride:no episode entry")
 	}
 
-	return "ride_" + escapePath(target.Path), feed, nil
+	return "ride_" + escapePath(target.Path), feed, metadata, nil
 }

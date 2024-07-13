@@ -10,20 +10,20 @@ import (
 	"github.com/gorilla/feeds"
 )
 
-func storiaFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
-	doc, err := fetchDocument(ctx, target)
+func storiaFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpMetadata, error) {
+	doc, metadata, err := fetchDocument(ctx, target)
 	if err != nil {
-		return "", nil, fmt.Errorf("storia:FetchErr:%w", err)
+		return "", nil, metadata, fmt.Errorf("storia:FetchErr:%w", err)
 	}
 
 	title := doc.Find("#top > div > article > section:nth-child(1) > div > ul > li:nth-child(1)").Text()
 	if title == "" {
-		return "", nil, fmt.Errorf("storia:title not found")
+		return "", nil, metadata, fmt.Errorf("storia:title not found")
 	}
 
 	author := doc.Find("#top > div > article > section:nth-child(1) > div > ul > li:nth-child(2)").Text()
 	if author == "" {
-		return "", nil, fmt.Errorf("storia:author not found")
+		return "", nil, metadata, fmt.Errorf("storia:author not found")
 	}
 	desc := trimDescription(doc.Find("#top > div > article > section:nth-child(2) > div > div.detail__area > div:nth-child(1) > p").Text())
 
@@ -54,8 +54,8 @@ func storiaFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, erro
 	episodes.Find("div.read__outer").Each(walkEpisode)
 
 	if len(feed.Items) == 0 {
-		return "", nil, fmt.Errorf("storia:no episode entry")
+		return "", nil, metadata, fmt.Errorf("storia:no episode entry")
 	}
 
-	return "storia_" + escapePath(target.Path), feed, nil
+	return "storia_" + escapePath(target.Path), feed, metadata, nil
 }

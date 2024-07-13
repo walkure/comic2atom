@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"net/http"
@@ -32,8 +33,17 @@ func handleEntry(w http.ResponseWriter, r *http.Request) {
 
 	rawuri := strings.TrimPrefix(r.URL.Path, "/entry/")
 
-	_, feed, err := siteloader.GetFeed(r.Context(), rawuri)
+	ctx := siteloader.SetIfNoneMatch(r.Context(), r.Header.Get("If-None-Match"))
+	ctx = siteloader.SetIfModifiedSince(ctx, r.Header.Get("If-Modified-Since"))
+
+	_, feed, metadata, err := siteloader.GetFeed(ctx, rawuri)
 	if err != nil {
+
+		if errors.Is(err, siteloader.ErrNotModified) {
+			w.WriteHeader(http.StatusNotModified)
+			return
+		}
+
 		fmt.Printf("GetFeed error:%+v\n", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -47,6 +57,14 @@ func handleEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/atom+xml")
+
+	if metadata.LastModified != "" {
+		w.Header().Set("Last-Modified", metadata.LastModified)
+	}
+	if metadata.ETag != "" {
+		w.Header().Set("ETag", metadata.ETag)
+	}
+
 	fmt.Fprint(w, feedXml)
 
 }

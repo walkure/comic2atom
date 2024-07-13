@@ -35,7 +35,7 @@ func TestNarou(t *testing.T) {
 
 	testUrl, _ := url.Parse(testsv.URL + "/path_t/est")
 
-	fname, feed, err := narouFeed(context.Background(), testUrl)
+	fname, feed, _, err := narouFeed(context.Background(), testUrl)
 	assert.Nil(t, err)
 	assert.Nil(t, err)
 

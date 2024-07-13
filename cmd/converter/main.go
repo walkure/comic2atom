@@ -93,7 +93,7 @@ func processTarget(targetUri, pathPrefix string) error {
 
 	fmt.Printf("Fetch %s ", targetUri)
 
-	fname, feed, err := siteloader.GetFeed(context.TODO(), targetUri)
+	fname, feed, _, err := siteloader.GetFeed(context.TODO(), targetUri)
 
 	if err != nil {
 		return err

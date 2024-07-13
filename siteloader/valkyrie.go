@@ -10,20 +10,20 @@ import (
 	"github.com/gorilla/feeds"
 )
 
-func valkyrieFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
-	doc, err := fetchDocument(ctx, target)
+func valkyrieFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpMetadata, error) {
+	doc, metadata, err := fetchDocument(ctx, target)
 	if err != nil {
-		return "", nil, fmt.Errorf("valkyrie:FetchErr:%w", err)
+		return "", nil, metadata, fmt.Errorf("valkyrie:FetchErr:%w", err)
 	}
 
 	title := doc.Find("title").Text()
 	if title == "" {
-		return "", nil, fmt.Errorf("valkyrie:title not found")
+		return "", nil, metadata, fmt.Errorf("valkyrie:title not found")
 	}
 
 	author := doc.Find("#writer > p").Text()
 	if author == "" {
-		return "", nil, fmt.Errorf("valkyrie:author not found")
+		return "", nil, metadata, fmt.Errorf("valkyrie:author not found")
 	}
 	author = trimDescription(author)
 
@@ -65,8 +65,8 @@ func valkyrieFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, er
 	})
 
 	if len(feed.Items) == 0 {
-		return "", nil, fmt.Errorf("valkyrie:no episode entry")
+		return "", nil, metadata, fmt.Errorf("valkyrie:no episode entry")
 	}
 
-	return "valkyrie_" + escapePath(target.Path), feed, nil
+	return "valkyrie_" + escapePath(target.Path), feed, metadata, nil
 }

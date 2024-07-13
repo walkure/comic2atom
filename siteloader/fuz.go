@@ -16,7 +16,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func fuzFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
+func fuzFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpMetadata, error) {
 	idx := strings.LastIndex(target.Path, "/")
 	idStr := target.Path[idx+1:]
 	freeOnly := target.Query().Has("freeOnly")
@@ -26,12 +26,12 @@ func fuzFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) 
 	target.RawQuery = tq.Encode()
 
 	if idStr == "" {
-		return "", nil, errors.New("fuz:invalid URI")
+		return "", nil, HttpMetadata{}, errors.New("fuz:invalid URI")
 	}
 
 	id64, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		return "", nil, fmt.Errorf("fuz:invalid id: %w", err)
+		return "", nil, HttpMetadata{}, fmt.Errorf("fuz:invalid id: %w", err)
 	}
 
 	mangaId := uint32(id64)
@@ -45,28 +45,33 @@ func fuzFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) 
 
 	req, err := proto.Marshal(mdReq)
 	if err != nil {
-		return "", nil, fmt.Errorf("fuz:failure to marshal request: %w", err)
+		return "", nil, HttpMetadata{}, fmt.Errorf("fuz:failure to marshal request: %w", err)
 	}
 
 	res, err := http.Post("https://api.comic-fuz.com/v1/manga_detail", "application/protobuf", bytes.NewReader(req))
 	if err != nil {
-		return "", nil, fmt.Errorf("fuz:failure to post request: %w", err)
+		return "", nil, HttpMetadata{}, fmt.Errorf("fuz:failure to post request: %w", err)
 	}
 	defer res.Body.Close()
 
+	metadata := HttpMetadata{
+		ETag:         res.Header.Get("ETag"),
+		LastModified: res.Header.Get("Last-Modified"),
+	}
+
 	if res.StatusCode != http.StatusOK {
-		return "", nil, fmt.Errorf("fuz:server failed: %d(%s)", res.StatusCode, http.StatusText(res.StatusCode))
+		return "", nil, metadata, fmt.Errorf("fuz:server failed: %d(%s)", res.StatusCode, http.StatusText(res.StatusCode))
 	}
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return "", nil, fmt.Errorf("fuz:failure to read request: %w", err)
+		return "", nil, metadata, fmt.Errorf("fuz:failure to read request: %w", err)
 	}
 
 	data := &MangaDetailResponse{}
 
 	if err = proto.Unmarshal(body, data); err != nil {
-		return "", nil, fmt.Errorf("fuz:failure to unmarshal response: %w", err)
+		return "", nil, metadata, fmt.Errorf("fuz:failure to unmarshal response: %w", err)
 	}
 
 	var authors []string
@@ -78,12 +83,12 @@ func fuzFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) 
 
 	loc, err := time.LoadLocation("Asia/Tokyo")
 	if err != nil {
-		return "", nil, fmt.Errorf("fuz:failure to load Asia/Tokyo timezone: %w", err)
+		return "", nil, metadata, fmt.Errorf("fuz:failure to load Asia/Tokyo timezone: %w", err)
 	}
 
 	latestUpdate, err := time.ParseInLocation("2006/01/02", data.Manga.LatestUpdatedDate, loc)
 	if err != nil {
-		return "", nil, fmt.Errorf("fuz:failure to parse LatestUpdatedDate[%s]: %w", data.Manga.LatestUpdatedDate, err)
+		return "", nil, metadata, fmt.Errorf("fuz:failure to parse LatestUpdatedDate[%s]: %w", data.Manga.LatestUpdatedDate, err)
 	}
 
 	feed := &feeds.Feed{
@@ -124,5 +129,5 @@ func fuzFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) 
 		freeOnlyPrefix = "_freeOnly"
 	}
 
-	return "fuz_" + escapePath(target.Path) + freeOnlyPrefix, feed, nil
+	return "fuz_" + escapePath(target.Path) + freeOnlyPrefix, feed, metadata, nil
 }

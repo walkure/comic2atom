@@ -16,10 +16,10 @@ import (
 	"golang.org/x/net/html/charset"
 )
 
-func GetFeed(ctx context.Context, target string) (string, *feeds.Feed, error) {
+func GetFeed(ctx context.Context, target string) (string, *feeds.Feed, HttpMetadata, error) {
 	uri, err := url.Parse(target)
 	if err != nil {
-		return "", nil, err
+		return "", nil, HttpMetadata{}, err
 	}
 
 	if strings.HasPrefix(target, "https://storia.takeshobo.co.jp/manga/") {
@@ -58,7 +58,7 @@ func GetFeed(ctx context.Context, target string) (string, *feeds.Feed, error) {
 		return comicwalkerFeed(ctx, uri)
 	}
 
-	return "", nil, fmt.Errorf("%s not supported site", target)
+	return "", nil, HttpMetadata{}, fmt.Errorf("%s not supported site", target)
 }
 
 func escapePath(path string) string {
@@ -95,47 +95,106 @@ func resolveRelativeURI(baseUri *url.URL, relative string) (string, error) {
 	return relativeUri.String(), nil
 }
 
-func fetchDocument(ctx context.Context, target *url.URL) (*goquery.Document, error) {
+const ifNoneMatchKey = ifNoneMatchType("If-None-Match")
+
+type ifNoneMatchType string
+
+const ifModifiedSinceKey = isModifiedSinceType("If-Modified-Since")
+
+type isModifiedSinceType string
+
+var ErrNotModified = fmt.Errorf("content not modified")
+
+func getIfNoneMatch(ctx context.Context) (string, bool) {
+	if ifNoneMatch, ok := ctx.Value(ifNoneMatchKey).(string); ok {
+		return ifNoneMatch, true
+	}
+	return "", false
+}
+
+func getIsModifiedSince(ctx context.Context) (string, bool) {
+	if isModifiedSince, ok := ctx.Value(ifModifiedSinceKey).(string); ok {
+		return isModifiedSince, true
+	}
+	return "", false
+}
+
+func SetIfNoneMatch(ctx context.Context, ifNoneMatch string) context.Context {
+	if ifNoneMatch == "" {
+		return ctx
+	}
+	return context.WithValue(ctx, ifNoneMatchKey, ifNoneMatch)
+}
+
+func SetIfModifiedSince(ctx context.Context, ifModifiedSince string) context.Context {
+	if ifModifiedSince == "" {
+		return ctx
+	}
+	return context.WithValue(ctx, ifModifiedSinceKey, ifModifiedSince)
+}
+
+type HttpMetadata struct {
+	ETag         string
+	LastModified string
+}
+
+func fetchDocument(ctx context.Context, target *url.URL) (*goquery.Document, HttpMetadata, error) {
 	// HTTP Get
 	req, err := http.NewRequestWithContext(ctx, "GET", target.String(), nil)
 	if err != nil {
-		return nil, fmt.Errorf("cannot generate request:%w", err)
+		return nil, HttpMetadata{}, fmt.Errorf("cannot generate request:%w", err)
 	}
 	req.Header.Set("User-Agent", "Saitama")
 
+	//set if-none-match and if-modified-since
+	if ifNoneMatch, ok := getIfNoneMatch(ctx); ok {
+		req.Header.Set("If-None-Match", ifNoneMatch)
+	}
+	if ifModifiedSince, ok := getIsModifiedSince(ctx); ok {
+		req.Header.Set("If-Modified-Since", ifModifiedSince)
+	}
+
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("HTTP/GET error:%w", err)
+		return nil, HttpMetadata{}, fmt.Errorf("HTTP/GET error:%w", err)
 	}
 	defer res.Body.Close()
+
+	// Not Modified
+	if res.StatusCode == http.StatusNotModified {
+		return nil, HttpMetadata{}, ErrNotModified
+	}
 
 	// Read
 	bytesRead, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, fmt.Errorf("read error:%w", err)
+		return nil, HttpMetadata{}, fmt.Errorf("read error:%w", err)
 	}
 
 	// detect charset
 	detector := chardet.NewTextDetector()
 	deetctResult, err := detector.DetectBest(bytesRead)
 	if err != nil {
-		return nil, fmt.Errorf("charset detect error:%w", err)
+		return nil, HttpMetadata{}, fmt.Errorf("charset detect error:%w", err)
 	}
 
 	// convert charset
 	bytesReader := bytes.NewReader(bytesRead)
 	reader, err := charset.NewReaderLabel(deetctResult.Charset, bytesReader)
 	if err != nil {
-		return nil, fmt.Errorf("charset convert error:%w", err)
+		return nil, HttpMetadata{}, fmt.Errorf("charset convert error:%w", err)
 	}
 
 	// create document
 	doc, err := goquery.NewDocumentFromReader(reader)
 	if err != nil {
-		return nil, fmt.Errorf("cannot create goquery document:%w", err)
+		return nil, HttpMetadata{}, fmt.Errorf("cannot create goquery document:%w", err)
 	}
 
-	return doc, nil
+	return doc, HttpMetadata{
+		ETag:         res.Header.Get("ETag"),
+		LastModified: res.Header.Get("Last-Modified"),
+	}, nil
 }
 
 func generateHashedHex(id string) string {

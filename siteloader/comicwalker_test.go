@@ -25,7 +25,7 @@ func TestComicWalker(t *testing.T) {
 	defer testsv.Close()
 
 	testUrl, _ := url.Parse(testsv.URL + "/detail/KC_WCODE_SAMPLE")
-	fname, feed, err := comicwalkerFeed(context.Background(), testUrl)
+	fname, feed, _, err := comicwalkerFeed(context.Background(), testUrl)
 	assert.Nil(t, err)
 
 	assert.Equal(t, "comicwalker_KC_WCODE_SAMPLE", fname)

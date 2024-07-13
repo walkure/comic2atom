@@ -11,25 +11,25 @@ import (
 	"github.com/gorilla/feeds"
 )
 
-func narouFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
-	doc, err := fetchDocument(ctx, target)
+func narouFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpMetadata, error) {
+	doc, metadata, err := fetchDocument(ctx, target)
 	if err != nil {
-		return "", nil, fmt.Errorf("storia:FetchErr:%w", err)
+		return "", nil, metadata, fmt.Errorf("storia:FetchErr:%w", err)
 	}
 
 	title := doc.Find("#novel_color > p").Text()
 	if title == "" {
-		return "", nil, fmt.Errorf("narou:title not found")
+		return "", nil, metadata, fmt.Errorf("narou:title not found")
 	}
 
 	author := doc.Find("#novel_color > div.novel_writername > a").Text()
 	if author == "" {
-		return "", nil, fmt.Errorf("narou:author not found")
+		return "", nil, metadata, fmt.Errorf("narou:author not found")
 	}
 
 	desc := doc.Find("#novel_ex").Text()
 	if desc == "" {
-		return "", nil, fmt.Errorf("narou:description not found")
+		return "", nil, metadata, fmt.Errorf("narou:description not found")
 	}
 
 	feed := &feeds.Feed{
@@ -120,24 +120,25 @@ func narouFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error
 
 		nextURL, err := target.Parse(next)
 		if err != nil {
-			return "", nil, fmt.Errorf("narou:cannot parse next URL:%w", err)
+			return "", nil, metadata, fmt.Errorf("narou:cannot parse next URL:%w", err)
 		}
 
-		doc, err = fetchDocument(ctx, nextURL)
+		// use latest metadata(etag and last-modified) for next request
+		doc, metadata, err = fetchDocument(ctx, nextURL)
 		if err != nil {
-			return "", nil, fmt.Errorf("narou:Fetch(Next)Err:%w", err)
+			return "", nil, metadata, fmt.Errorf("narou:Fetch(Next)Err:%w", err)
 		}
 	}
 
 	if eachError != nil {
-		return "", nil, fmt.Errorf("narou:%w", eachError)
+		return "", nil, metadata, fmt.Errorf("narou:%w", eachError)
 	}
 
 	if len(feed.Items) == 0 {
-		return "", nil, fmt.Errorf("narou:no episode entry")
+		return "", nil, metadata, fmt.Errorf("narou:no episode entry")
 	}
 
-	return "narou_" + escapePath(target.Path), feed, nil
+	return "narou_" + escapePath(target.Path), feed, metadata, nil
 }
 
 func parseTimestamp(str string) (time.Time, error) {

@@ -10,20 +10,20 @@ import (
 	"github.com/gorilla/feeds"
 )
 
-func gammaPlusFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
-	doc, err := fetchDocument(ctx, target)
+func gammaPlusFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpMetadata, error) {
+	doc, metadata, err := fetchDocument(ctx, target)
 	if err != nil {
-		return "", nil, fmt.Errorf("gammaplus:FetchErr:%w", err)
+		return "", nil, metadata, fmt.Errorf("gammaplus:FetchErr:%w", err)
 	}
 
 	title := doc.Find("#top > div > article > section:nth-child(1) > div > ul > li:nth-child(1)").Text()
 	if title == "" {
-		return "", nil, fmt.Errorf("gammaplus:title not found")
+		return "", nil, metadata, fmt.Errorf("gammaplus:title not found")
 	}
 
 	author := doc.Find("#top > div > article > section:nth-child(1) > div > ul > li:nth-child(2)").Text()
 	if author == "" {
-		return "", nil, fmt.Errorf("gammaplus:author not found")
+		return "", nil, metadata, fmt.Errorf("gammaplus:author not found")
 	}
 	desc := trimDescription(doc.Find("#top > div > article > section:nth-child(3) > div > div.detail__area > div:nth-child(1) > p:nth-child(3)").Text())
 
@@ -58,8 +58,8 @@ func gammaPlusFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, e
 	episodes.Each(walkEpisode)
 
 	if len(feed.Items) == 0 {
-		return "", nil, fmt.Errorf("gammaplus:no episode entry")
+		return "", nil, metadata, fmt.Errorf("gammaplus:no episode entry")
 	}
 
-	return "gammaplus_" + escapePath(target.Path), feed, nil
+	return "gammaplus_" + escapePath(target.Path), feed, metadata, nil
 }

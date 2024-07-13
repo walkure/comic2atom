@@ -11,24 +11,24 @@ import (
 	"github.com/gorilla/feeds"
 )
 
-func meteorFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
-	doc, err := fetchDocument(ctx, target)
+func meteorFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpMetadata, error) {
+	doc, metadata, err := fetchDocument(ctx, target)
 	if err != nil {
-		return "", nil, fmt.Errorf("meteor:FetchErr:%w", err)
+		return "", nil, metadata, fmt.Errorf("meteor:FetchErr:%w", err)
 	}
 
 	title := strings.TrimSpace(doc.Find("#contents > div.h2_area > h2 > div").Text())
 	if title == "" {
-		return "", nil, fmt.Errorf("meteor:title not found")
+		return "", nil, metadata, fmt.Errorf("meteor:title not found")
 	}
 	author := getTrimmedAuthor(doc.Find("#contents > div.work_author_intro.container-fluid > div > div.work_author_intro_txt_box > div.work_author_intro_name").Text())
 	if author == "" {
-		return "", nil, fmt.Errorf("meteor:author not found")
+		return "", nil, metadata, fmt.Errorf("meteor:author not found")
 	}
 
 	desc := trimDescription(doc.Find("#contents > div.work_story.container-fluid > div").Text())
 	if desc == "" {
-		return "", nil, fmt.Errorf("meteor:desc not found")
+		return "", nil, metadata, fmt.Errorf("meteor:desc not found")
 	}
 
 	feed := &feeds.Feed{
@@ -75,10 +75,10 @@ func meteorFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, erro
 	})
 
 	if len(feed.Items) == 0 {
-		return "", nil, fmt.Errorf("meteor:no episode entry")
+		return "", nil, metadata, fmt.Errorf("meteor:no episode entry")
 	}
 
-	return "meteor_" + escapePath(target.Path), feed, nil
+	return "meteor_" + escapePath(target.Path), feed, metadata, nil
 }
 
 func getTrimmedAuthor(author string) string {

@@ -25,7 +25,7 @@ func TestKakuyomu(t *testing.T) {
 
 	testUrl, _ := url.Parse(testsv.URL)
 
-	fname, feed, err := kakuyomuFeed(context.Background(), testUrl)
+	fname, feed, _, err := kakuyomuFeed(context.Background(), testUrl)
 	assert.Nil(t, err)
 
 	assert.Equal(t, "kakuyomu_works987654321", fname)
