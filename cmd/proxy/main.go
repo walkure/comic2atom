@@ -34,12 +34,14 @@ func handleEntry(w http.ResponseWriter, r *http.Request) {
 
 	_, feed, err := siteloader.GetFeed(rawuri)
 	if err != nil {
+		fmt.Printf("GetFeed error:%+v\n", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	feedXml, err := feed.ToAtom()
 	if err != nil {
+		fmt.Printf("ToAtom error:%+v\n", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
