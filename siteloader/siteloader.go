@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"crypto/md5"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -95,7 +95,6 @@ func resolveRelativeURI(baseUri *url.URL, relative string) (string, error) {
 }
 
 func fetchDocument(target *url.URL) (*goquery.Document, error) {
-
 	// HTTP Get
 	req, err := http.NewRequest("GET", target.String(), nil)
 	if err != nil {
@@ -110,7 +109,7 @@ func fetchDocument(target *url.URL) (*goquery.Document, error) {
 	defer res.Body.Close()
 
 	// Read
-	bytesRead, err := ioutil.ReadAll(res.Body)
+	bytesRead, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, fmt.Errorf("read error:%w", err)
 	}
