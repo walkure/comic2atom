@@ -38,6 +38,11 @@ func gammaPlusFeed(target *url.URL) (string, *feeds.Feed, error) {
 
 	walkEpisode := func(i int, s *goquery.Selection) {
 		title := trimDescription(s.Find("li.episode").Text())
+
+		if title == "" {
+			return
+		}
+
 		href, _ := s.Find("a").Attr("href")
 
 		uri, _ := resolveRelativeURI(target, href)
