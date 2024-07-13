@@ -1,10 +1,13 @@
 module github.com/walkure/comic2atom
 
-go 1.21
+go 1.22
+
+toolchain go1.22.5
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/gorilla/feeds v1.1.2
+	github.com/gorilla/mux v1.8.1
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/net v0.19.0

@@ -6,7 +6,7 @@ RUN apk update && apk add --no-cache ca-certificates tzdata && update-ca-certifi
     cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && apk del tzdata
 RUN go mod download
 RUN addgroup -g 6128 -S nonroot && adduser -u 6128 -S nonroot -G nonroot
-RUN CGO_ENABLED=0 GOOS=linux go build -o /app/comic2atom ./cmd/converter
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/comic2atom ./cmd/proxy
 
 FROM scratch as runner
 
@@ -21,5 +21,6 @@ ENV TZ=Asia/Tokyo
 
 USER nonroot
 COPY --chown=nonroot:nonroot --from=builder  /app/comic2atom /app/
+EXPOSE 8080
 
 ENTRYPOINT ["/app/comic2atom"]
