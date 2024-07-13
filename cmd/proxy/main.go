@@ -32,7 +32,7 @@ func handleEntry(w http.ResponseWriter, r *http.Request) {
 
 	rawuri := strings.TrimPrefix(r.URL.Path, "/entry/")
 
-	_, feed, err := siteloader.GetFeed(rawuri)
+	_, feed, err := siteloader.GetFeed(r.Context(), rawuri)
 	if err != nil {
 		fmt.Printf("GetFeed error:%+v\n", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

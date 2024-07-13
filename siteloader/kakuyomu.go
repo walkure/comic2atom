@@ -1,6 +1,7 @@
 package siteloader
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -26,8 +27,8 @@ func getTimFromObj(i interface{}) (time.Time, error) {
 	return time.Parse(time.RFC3339, t)
 }
 
-func kakuyomuFeed(target *url.URL) (string, *feeds.Feed, error) {
-	doc, err := fetchDocument(target)
+func kakuyomuFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
+	doc, err := fetchDocument(ctx, target)
 	if err != nil {
 		return "", nil, fmt.Errorf("kakuyomu:FetchErr:%w", err)
 	}

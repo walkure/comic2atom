@@ -1,6 +1,7 @@
 package siteloader
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,8 +12,8 @@ import (
 	"github.com/gorilla/feeds"
 )
 
-func comicwalkerFeed(target *url.URL) (string, *feeds.Feed, error) {
-	doc, err := fetchDocument(target)
+func comicwalkerFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
+	doc, err := fetchDocument(ctx, target)
 	if err != nil {
 		return "", nil, fmt.Errorf("comicwalker:FetchErr:%w", err)
 	}

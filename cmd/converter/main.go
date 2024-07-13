@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -92,7 +93,7 @@ func processTarget(targetUri, pathPrefix string) error {
 
 	fmt.Printf("Fetch %s ", targetUri)
 
-	fname, feed, err := siteloader.GetFeed(targetUri)
+	fname, feed, err := siteloader.GetFeed(context.TODO(), targetUri)
 
 	if err != nil {
 		return err

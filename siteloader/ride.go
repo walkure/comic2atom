@@ -1,6 +1,7 @@
 package siteloader
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"time"
@@ -9,8 +10,8 @@ import (
 	"github.com/gorilla/feeds"
 )
 
-func rideFeed(target *url.URL) (string, *feeds.Feed, error) {
-	doc, err := fetchDocument(target)
+func rideFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
+	doc, err := fetchDocument(ctx, target)
 	if err != nil {
 		return "", nil, fmt.Errorf("ride:FetchErr:%w", err)
 	}

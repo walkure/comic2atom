@@ -2,6 +2,7 @@ package siteloader
 
 import (
 	"bytes"
+	"context"
 	"crypto/md5"
 	"fmt"
 	"io"
@@ -15,46 +16,46 @@ import (
 	"golang.org/x/net/html/charset"
 )
 
-func GetFeed(target string) (string, *feeds.Feed, error) {
+func GetFeed(ctx context.Context, target string) (string, *feeds.Feed, error) {
 	uri, err := url.Parse(target)
 	if err != nil {
 		return "", nil, err
 	}
 
 	if strings.HasPrefix(target, "https://storia.takeshobo.co.jp/manga/") {
-		return storiaFeed(uri)
+		return storiaFeed(ctx, uri)
 	}
 
 	if strings.HasPrefix(target, "https://gammaplus.takeshobo.co.jp/manga/") {
-		return gammaPlusFeed(uri)
+		return gammaPlusFeed(ctx, uri)
 	}
 
 	if strings.HasPrefix(target, "https://comic-meteor.jp/") {
-		return meteorFeed(uri)
+		return meteorFeed(ctx, uri)
 	}
 
 	if strings.HasPrefix(target, "https://www.comicride.jp/book/") {
-		return rideFeed(uri)
+		return rideFeed(ctx, uri)
 	}
 
 	if strings.HasPrefix(target, "https://www.comic-valkyrie.com/") {
-		return valkyrieFeed(uri)
+		return valkyrieFeed(ctx, uri)
 	}
 
 	if strings.HasPrefix(target, "https://ncode.syosetu.com/") {
-		return narouFeed(uri)
+		return narouFeed(ctx, uri)
 	}
 
 	if strings.HasPrefix(target, "https://kakuyomu.jp/works/") {
-		return kakuyomuFeed(uri)
+		return kakuyomuFeed(ctx, uri)
 	}
 
 	if strings.HasPrefix(target, "https://comic-fuz.com/manga/") {
-		return fuzFeed(uri)
+		return fuzFeed(ctx, uri)
 	}
 
 	if strings.HasPrefix(target, "https://comic-walker.com/detail/") {
-		return comicwalkerFeed(uri)
+		return comicwalkerFeed(ctx, uri)
 	}
 
 	return "", nil, fmt.Errorf("%s not supported site", target)
@@ -94,9 +95,9 @@ func resolveRelativeURI(baseUri *url.URL, relative string) (string, error) {
 	return relativeUri.String(), nil
 }
 
-func fetchDocument(target *url.URL) (*goquery.Document, error) {
+func fetchDocument(ctx context.Context, target *url.URL) (*goquery.Document, error) {
 	// HTTP Get
-	req, err := http.NewRequest("GET", target.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", target.String(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("cannot generate request:%w", err)
 	}

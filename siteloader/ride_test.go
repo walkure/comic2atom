@@ -1,6 +1,7 @@
 package siteloader
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -22,7 +23,7 @@ func TestRideErr(t *testing.T) {
 
 	testUrl, _ := url.Parse(testsv.URL)
 
-	fname, doc, err := rideFeed(testUrl)
+	fname, doc, err := rideFeed(context.Background(), testUrl)
 
 	assert.Error(t, err)
 	assert.Equal(t, "", fname)
@@ -44,7 +45,7 @@ func TestRide(t *testing.T) {
 
 	testUrl, _ := url.Parse(testsv.URL + "/path_t/est")
 
-	fname, feed, err := rideFeed(testUrl)
+	fname, feed, err := rideFeed(context.Background(), testUrl)
 	assert.Nil(t, err)
 	assert.Nil(t, err)
 

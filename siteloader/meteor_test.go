@@ -1,6 +1,7 @@
 package siteloader
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -26,7 +27,7 @@ func TestMeteorErr(t *testing.T) {
 
 	testUrl, _ := url.Parse(testsv.URL)
 
-	fname, doc, err := meteorFeed(testUrl)
+	fname, doc, err := meteorFeed(context.Background(), testUrl)
 
 	assert.Error(t, err)
 	assert.Equal(t, "", fname)
@@ -48,7 +49,7 @@ func TestMeteor(t *testing.T) {
 
 	testUrl, _ := url.Parse(testsv.URL + "/path_t/est")
 
-	fname, feed, err := meteorFeed(testUrl)
+	fname, feed, err := meteorFeed(context.Background(), testUrl)
 	assert.Nil(t, err)
 	assert.Nil(t, err)
 

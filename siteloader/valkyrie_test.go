@@ -1,6 +1,7 @@
 package siteloader
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -26,7 +27,7 @@ func TestValkyrie(t *testing.T) {
 
 	testUrl, _ := url.Parse(testsv.URL + "/path_t/est")
 
-	fname, feed, err := valkyrieFeed(testUrl)
+	fname, feed, err := valkyrieFeed(context.Background(), testUrl)
 	assert.Nil(t, err)
 	assert.Nil(t, err)
 

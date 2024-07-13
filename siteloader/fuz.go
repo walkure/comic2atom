@@ -2,6 +2,7 @@ package siteloader
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -15,7 +16,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func fuzFeed(target *url.URL) (string, *feeds.Feed, error) {
+func fuzFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
 	idx := strings.LastIndex(target.Path, "/")
 	idStr := target.Path[idx+1:]
 	freeOnly := target.Query().Has("freeOnly")

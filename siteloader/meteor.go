@@ -1,6 +1,7 @@
 package siteloader
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strings"
@@ -10,8 +11,8 @@ import (
 	"github.com/gorilla/feeds"
 )
 
-func meteorFeed(target *url.URL) (string, *feeds.Feed, error) {
-	doc, err := fetchDocument(target)
+func meteorFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
+	doc, err := fetchDocument(ctx, target)
 	if err != nil {
 		return "", nil, fmt.Errorf("meteor:FetchErr:%w", err)
 	}

@@ -1,6 +1,7 @@
 package siteloader
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -51,7 +52,7 @@ func TestFetchDocumentPrimitive(t *testing.T) {
 
 	testUrl, _ := url.Parse(testsv.URL)
 
-	doc, err := fetchDocument(testUrl)
+	doc, err := fetchDocument(context.Background(), testUrl)
 
 	if err != nil {
 		t.Errorf("%v", err)
@@ -76,7 +77,7 @@ func TestFetchDocumentFailure(t *testing.T) {
 
 	testUrl, _ := url.Parse(testsv.URL)
 
-	_, err := fetchDocument(testUrl)
+	_, err := fetchDocument(context.Background(), testUrl)
 
 	assert.Error(t, err)
 
@@ -87,12 +88,12 @@ func TestFetchDocumentFailure(t *testing.T) {
 }
 
 func TestGetFeed(t *testing.T) {
-	fname, feed, err := GetFeed("https://www.example.com/")
+	fname, feed, err := GetFeed(context.Background(), "https://www.example.com/")
 	assert.Equal(t, "", fname)
 	assert.Nil(t, feed)
 	assert.NotNil(t, err)
 
-	fname, feed, err = GetFeed("hoge")
+	fname, feed, err = GetFeed(context.Background(), "hoge")
 	assert.Equal(t, "", fname)
 	assert.Nil(t, feed)
 	assert.NotNil(t, err)

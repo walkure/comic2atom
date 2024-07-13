@@ -1,6 +1,7 @@
 package siteloader
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/url"
@@ -10,8 +11,8 @@ import (
 	"github.com/gorilla/feeds"
 )
 
-func narouFeed(target *url.URL) (string, *feeds.Feed, error) {
-	doc, err := fetchDocument(target)
+func narouFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, error) {
+	doc, err := fetchDocument(ctx, target)
 	if err != nil {
 		return "", nil, fmt.Errorf("storia:FetchErr:%w", err)
 	}
@@ -122,7 +123,7 @@ func narouFeed(target *url.URL) (string, *feeds.Feed, error) {
 			return "", nil, fmt.Errorf("narou:cannot parse next URL:%w", err)
 		}
 
-		doc, err = fetchDocument(nextURL)
+		doc, err = fetchDocument(ctx, nextURL)
 		if err != nil {
 			return "", nil, fmt.Errorf("narou:Fetch(Next)Err:%w", err)
 		}
