@@ -129,7 +129,6 @@ func getComicDetailJSON(data []map[string]interface{}) ([]byte, error) {
 					if !ok {
 						continue
 					}
-					fmt.Printf("%+v\n", queryPath)
 					if queryPath == "/api/contents/details/work" {
 						return json.Marshal(query["state"])
 					}
