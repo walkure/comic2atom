@@ -5,13 +5,13 @@ go 1.22
 toolchain go1.22.5
 
 require (
-	github.com/PuerkitoBio/goquery v1.8.1
-	github.com/gorilla/feeds v1.1.2
+	github.com/PuerkitoBio/goquery v1.9.2
+	github.com/gorilla/feeds v1.2.0
 	github.com/gorilla/mux v1.8.1
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d
-	github.com/stretchr/testify v1.8.4
-	golang.org/x/net v0.19.0
-	google.golang.org/protobuf v1.31.0
+	github.com/stretchr/testify v1.9.0
+	golang.org/x/net v0.24.0
+	google.golang.org/protobuf v1.34.2
 )
 
 require (
