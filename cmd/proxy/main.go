@@ -32,6 +32,10 @@ func handleEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rawuri := strings.TrimPrefix(r.URL.String(), "/entry/")
+	if rawuri == "" {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
 
 	ctx := siteloader.SetIfNoneMatch(r.Context(), r.Header.Get("If-None-Match"))
 	ctx = siteloader.SetIfModifiedSince(ctx, r.Header.Get("If-Modified-Since"))
