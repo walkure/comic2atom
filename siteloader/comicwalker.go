@@ -29,6 +29,8 @@ func comicwalkerFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed,
 		return "", nil, HttpMetadata{}, fmt.Errorf("comicwalker:URLSanitizeErr:%w", err)
 	}
 
+	fmt.Printf("comicwalker: target=%s\n", target.String())
+
 	doc, metadata, err := fetchDocument(ctx, target)
 	if err != nil {
 		return "", nil, metadata, fmt.Errorf("comicwalker:FetchErr:%w", err)

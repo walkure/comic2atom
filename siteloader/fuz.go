@@ -35,6 +35,7 @@ func fuzFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpMet
 	}
 
 	mangaId := uint32(id64)
+	fmt.Printf("fuz: mangaId=%d, freeOnly=%t\n", mangaId, freeOnly)
 
 	mdReq := &MangaDetailRequest{
 		MangaId: &mangaId,
