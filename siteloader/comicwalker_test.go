@@ -72,3 +72,42 @@ func TestComicWalker(t *testing.T) {
 	}
 
 }
+
+func TestSanitizeComicWalkerURL(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		want    string
+		wantErr bool
+	}{
+		{
+			name:  "valid url(detail and story)",
+			input: "https://example.com/detail/DETAIL_CODE/episodes/STORY_CODE?query=param",
+			want:  "https://example.com/detail/DETAIL_CODE/",
+		},
+		{
+			name:  "valid url(detail only)",
+			input: "https://example.com/detail/DETAIL_CODE?query=param",
+			want:  "https://example.com/detail/DETAIL_CODE/",
+		},
+		{
+			name:    "invalid url(no code)",
+			input:   "https://example.com/detail/?query=param",
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			inputURL, _ := url.Parse(tt.input)
+			got, err := sanitizeComicWalkerURL(inputURL)
+
+			if (err != nil) != tt.wantErr {
+				t.Errorf("sanitizeComicWalkerURL() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if (err == nil) && got.String() != tt.want {
+				t.Errorf("sanitizeComicWalkerURL() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

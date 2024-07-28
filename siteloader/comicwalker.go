@@ -12,7 +12,23 @@ import (
 	"github.com/gorilla/feeds"
 )
 
+func sanitizeComicWalkerURL(target *url.URL) (*url.URL, error) {
+	pathParams := strings.Split(target.Path, "/")
+	if pathParams[2] == "" {
+		return nil, fmt.Errorf("[%s] invalid path", target.String())
+	}
+	target.Path = fmt.Sprintf("/%s/%s/", pathParams[1], pathParams[2])
+	target.RawQuery = ""
+	return target, nil
+}
+
 func comicwalkerFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpMetadata, error) {
+
+	target, err := sanitizeComicWalkerURL(target)
+	if err != nil {
+		return "", nil, HttpMetadata{}, fmt.Errorf("comicwalker:URLSanitizeErr:%w", err)
+	}
+
 	doc, metadata, err := fetchDocument(ctx, target)
 	if err != nil {
 		return "", nil, metadata, fmt.Errorf("comicwalker:FetchErr:%w", err)
