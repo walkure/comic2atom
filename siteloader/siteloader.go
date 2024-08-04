@@ -54,6 +54,10 @@ func GetFeed(ctx context.Context, target string) (string, *feeds.Feed, HttpMetad
 		return comicwalkerFeed(ctx, uri)
 	}
 
+	if strings.HasPrefix(target, "https://comic.webnewtype.com/contents/") {
+		return newtypeFeed(ctx, uri)
+	}
+
 	return "", nil, HttpMetadata{}, fmt.Errorf("%s not supported site", target)
 }
 
@@ -134,7 +138,8 @@ type HttpMetadata struct {
 	LastModified string
 }
 
-func fetchDocument(ctx context.Context, target *url.URL) (*goquery.Document, HttpMetadata, error) {
+func getHttpBody(ctx context.Context, target *url.URL) ([]byte, HttpMetadata, error) {
+
 	// HTTP Get
 	req, err := http.NewRequestWithContext(ctx, "GET", target.String(), nil)
 	if err != nil {
@@ -167,30 +172,40 @@ func fetchDocument(ctx context.Context, target *url.URL) (*goquery.Document, Htt
 		return nil, HttpMetadata{}, fmt.Errorf("read error:%w", err)
 	}
 
+	return bytesRead, HttpMetadata{
+		ETag:         res.Header.Get("ETag"),
+		LastModified: res.Header.Get("Last-Modified"),
+	}, nil
+}
+
+func fetchDocument(ctx context.Context, target *url.URL) (*goquery.Document, HttpMetadata, error) {
+
+	bytesRead, metadata, err := getHttpBody(ctx, target)
+	if err != nil {
+		return nil, metadata, err
+	}
+
 	// detect charset
 	detector := chardet.NewTextDetector()
 	deetctResult, err := detector.DetectBest(bytesRead)
 	if err != nil {
-		return nil, HttpMetadata{}, fmt.Errorf("charset detect error:%w", err)
+		return nil, metadata, fmt.Errorf("charset detect error:%w", err)
 	}
 
 	// convert charset
 	bytesReader := bytes.NewReader(bytesRead)
 	reader, err := charset.NewReaderLabel(deetctResult.Charset, bytesReader)
 	if err != nil {
-		return nil, HttpMetadata{}, fmt.Errorf("charset convert error:%w", err)
+		return nil, metadata, fmt.Errorf("charset convert error:%w", err)
 	}
 
 	// create document
 	doc, err := goquery.NewDocumentFromReader(reader)
 	if err != nil {
-		return nil, HttpMetadata{}, fmt.Errorf("cannot create goquery document:%w", err)
+		return nil, metadata, fmt.Errorf("cannot create goquery document:%w", err)
 	}
 
-	return doc, HttpMetadata{
-		ETag:         res.Header.Get("ETag"),
-		LastModified: res.Header.Get("Last-Modified"),
-	}, nil
+	return doc, metadata, nil
 }
 
 func generateHashedHex(id string) string {
