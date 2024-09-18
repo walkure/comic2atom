@@ -17,17 +17,17 @@ func narouFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpM
 		return "", nil, metadata, fmt.Errorf("storia:FetchErr:%w", err)
 	}
 
-	title := doc.Find("#novel_color > p").Text()
+	title := doc.Find("h1.p-novel__title").Text()
 	if title == "" {
 		return "", nil, metadata, fmt.Errorf("narou:title not found")
 	}
 
-	author := doc.Find("#novel_color > div.novel_writername > a").Text()
+	author := doc.Find("div.p-novel__author > a").Text()
 	if author == "" {
 		return "", nil, metadata, fmt.Errorf("narou:author not found")
 	}
 
-	desc := doc.Find("#novel_ex").Text()
+	desc := doc.Find("div.p-novel__summary").Text()
 	if desc == "" {
 		return "", nil, metadata, fmt.Errorf("narou:description not found")
 	}
@@ -43,15 +43,15 @@ func narouFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpM
 	eachError := error(nil)
 
 	collectArticles := func(doc *goquery.Document) {
-		doc.Find("#novel_color > div.index_box").Children().EachWithBreak(func(i int, s *goquery.Selection) bool {
-			if s.Is("div") {
+		doc.Find("div.p-eplist").Children().EachWithBreak(func(i int, s *goquery.Selection) bool {
+			if s.Is("div.p-eplist__chapter-title") {
 				chapter = s.Text()
 				return true
 			}
 
-			if s.Is("dl") {
-				subject := s.Find("dd > a")
-				subtitle := subject.Text()
+			if s.Is("div.p-eplist__sublist") {
+				subject := s.Find("a.p-eplist__subtitle")
+				subtitle := trimDescription(subject.Text())
 				link, ok := subject.Attr("href")
 				if !ok {
 					eachError = errors.New("cannot find href")
@@ -74,7 +74,7 @@ func narouFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpM
 					Id:    generateHashedHex(href),
 				}
 
-				created := s.Find("dt").Text()
+				created := s.Find("div.p-eplist__update").Text()
 				if created == "" {
 					eachError = errors.New("cannot find created timestamp")
 					return false
@@ -89,7 +89,7 @@ func narouFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpM
 					feed.Updated = parsed
 				}
 
-				updated, ok := s.Find("dt > span").Attr("title")
+				updated, ok := s.Find("div.p-eplist__update > span").Attr("title")
 				if ok {
 					parsed, err := parseTimestamp(updated)
 					if err != nil {
@@ -112,7 +112,7 @@ func narouFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpM
 	for {
 		collectArticles(doc)
 
-		next, ok := doc.Find(`a[class="novelview_pager-next"]`).Attr("href")
+		next, ok := doc.Find(`a[class="c-pager__item c-pager__item--next"]`).Attr("href")
 
 		if !ok {
 			break

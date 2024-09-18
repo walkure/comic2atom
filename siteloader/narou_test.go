@@ -2,6 +2,7 @@ package siteloader
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -19,7 +20,7 @@ func TestNarou(t *testing.T) {
 		fn := "./testdata/narou_test_p1.html"
 
 		if r.URL.Query().Get("p") != "" {
-			fn = "./testdata/narou_test_p2.html"
+			fn = fmt.Sprintf("./testdata/narou_test_p%s.html", r.URL.Query().Get("p"))
 		}
 
 		f, err := os.Open(fn)
