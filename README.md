@@ -45,6 +45,10 @@ e.g. `http://localhost:18080/entry/https://www.example.com/comic/1`
 
 ※ 自分が見たいとこだけ試したので、サイトで提供されてる全部のコンテンツで確実に動くわけではないです。
 
+## license
+
+MIT
+
 ## author
 
 walkure at 3pf.jp
