@@ -54,8 +54,8 @@ func GetFeed(ctx context.Context, target string) (string, *feeds.Feed, HttpMetad
 		return comicwalkerFeed(ctx, uri)
 	}
 
-	if strings.HasPrefix(target, "https://comic.webnewtype.com/contents/") {
-		return newtypeFeed(ctx, uri)
+	if strings.HasPrefix(target, "https://www.ganganonline.com/title/") {
+		return ganganonlineFeed(ctx, uri)
 	}
 
 	return "", nil, HttpMetadata{}, fmt.Errorf("%s not supported site", target)

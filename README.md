@@ -41,7 +41,7 @@ e.g. `http://localhost:18080/entry/https://www.example.com/comic/1`
   - [カクヨム](https://kakuyomu.jp/)
   - [COMIC FUZ](https://comic-fuz.com/)
   - [カドコミ](https://comic-walker.com/)
-  - [コミックNewtype](https://comic.webnewtype.com/)
+  - [ガンガンONLINE](https://www.ganganonline.com/)
 
 ※ 自分が見たいとこだけ試したので、サイトで提供されてる全部のコンテンツで確実に動くわけではないです。
 
