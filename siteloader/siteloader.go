@@ -30,7 +30,7 @@ func GetFeed(ctx context.Context, target string) (string, *feeds.Feed, HttpMetad
 		return gammaPlusFeed(ctx, uri)
 	}
 
-	if strings.HasPrefix(target, "https://comic-meteor.jp/") {
+	if strings.HasPrefix(target, "https://kirapo.jp/") {
 		return meteorFeed(ctx, uri)
 	}
 

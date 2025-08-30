@@ -30,7 +30,7 @@ e.g. `http://localhost:18080/entry/https://www.example.com/comic/1`
 公式でtopic単位のAtomとかRSSを吐いてくれればいいんですけどね…。
 
 - 毎週水曜更新
-  - [COMICメテオ](https://comic-meteor.jp/)
+  - [COMICメテオ](https://kirapo.jp/meteor)
 - 毎週金曜更新
   - [ストーリアダッシュ](https://storia.takeshobo.co.jp/)
   - [ガンマぷらす](https://gammaplus.takeshobo.co.jp/)
