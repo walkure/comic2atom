@@ -27,7 +27,7 @@ e.g. `http://localhost:18080/entry/https://www.example.com/comic/1`
 
 ## supported sites
 
-公式でtopic単位のAtomとかRSSを吐いてくれればいいんですけどね…。
+公式でtopic単位のまともなAtomとかRSSを吐いてくれればいいんですけどね…。
 
 - 毎週水曜更新
   - [COMICメテオ](https://kirapo.jp/meteor)
@@ -39,6 +39,8 @@ e.g. `http://localhost:18080/entry/https://www.example.com/comic/1`
   - [COMIC FUZ](https://comic-fuz.com/)
   - [カドコミ](https://comic-walker.com/)
   - [ガンガンONLINE](https://www.ganganonline.com/)
+  - [竹コミ!](https://takecomic.jp/)
+    - Atomフィードあるけど、何故か**古い方から**最大25話分だけ吐くので長期連載の更新は取れない。
 
 ※ 自分が見たいとこだけ試したので、サイトで提供されてる全部のコンテンツで確実に動くわけではないです。
 

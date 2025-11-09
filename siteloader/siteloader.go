@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"context"
 	"crypto/md5"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/feeds"
@@ -48,6 +50,10 @@ func GetFeed(ctx context.Context, target string) (string, *feeds.Feed, HttpMetad
 
 	if strings.HasPrefix(target, "https://www.ganganonline.com/title/") {
 		return ganganonlineFeed(ctx, uri)
+	}
+
+	if strings.HasPrefix(target, "https://takecomic.jp/series/") {
+		return takecomiFeed(ctx, uri)
 	}
 
 	return "", nil, HttpMetadata{}, fmt.Errorf("%s not supported site", target)
@@ -202,4 +208,17 @@ func fetchDocument(ctx context.Context, target *url.URL) (*goquery.Document, Htt
 
 func generateHashedHex(id string) string {
 	return fmt.Sprintf("%x", (md5.Sum([]byte(id))))
+}
+
+type UnixTime time.Time
+
+func (ut *UnixTime) UnmarshalJSON(b []byte) error {
+	var unixSeconds int64
+
+	if err := json.Unmarshal(b, &unixSeconds); err != nil {
+		return err
+	}
+
+	*ut = UnixTime(time.Unix(unixSeconds, 0))
+	return nil
 }
