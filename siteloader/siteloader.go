@@ -22,14 +22,6 @@ func GetFeed(ctx context.Context, target string) (string, *feeds.Feed, HttpMetad
 		return "", nil, HttpMetadata{}, err
 	}
 
-	if strings.HasPrefix(target, "https://storia.takeshobo.co.jp/manga/") {
-		return storiaFeed(ctx, uri)
-	}
-
-	if strings.HasPrefix(target, "https://gammaplus.takeshobo.co.jp/manga/") {
-		return gammaPlusFeed(ctx, uri)
-	}
-
 	if strings.HasPrefix(target, "https://kirapo.jp/") {
 		return meteorFeed(ctx, uri)
 	}
