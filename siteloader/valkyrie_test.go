@@ -29,7 +29,6 @@ func TestValkyrie(t *testing.T) {
 
 	fname, feed, _, err := valkyrieFeed(context.Background(), testUrl)
 	assert.Nil(t, err)
-	assert.Nil(t, err)
 
 	assert.Equal(t, "valkyrie_path_test", fname)
 

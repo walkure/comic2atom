@@ -51,7 +51,6 @@ func TestMeteor(t *testing.T) {
 
 	fname, feed, _, err := meteorFeed(context.Background(), testUrl)
 	assert.Nil(t, err)
-	assert.Nil(t, err)
 
 	assert.Equal(t, "meteor_path_test", fname)
 

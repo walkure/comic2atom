@@ -29,7 +29,6 @@ func TestGanganOnline(t *testing.T) {
 
 	fname, feed, _, err := ganganonlineFeed(context.Background(), testUrl)
 	assert.Nil(t, err)
-	assert.Nil(t, err)
 
 	assert.Equal(t, "ganganonline_12345", fname)
 

@@ -38,7 +38,6 @@ func TestNarou(t *testing.T) {
 
 	fname, feed, _, err := narouFeed(context.Background(), testUrl)
 	assert.Nil(t, err)
-	assert.Nil(t, err)
 
 	assert.Equal(t, "narou_path_test", fname)
 
