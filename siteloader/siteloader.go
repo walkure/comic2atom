@@ -56,6 +56,10 @@ func GetFeed(ctx context.Context, target string) (string, *feeds.Feed, HttpMetad
 		return takecomiFeed(ctx, uri)
 	}
 
+	if strings.HasPrefix(target, "https://www.alphapolis.co.jp/manga/official/") {
+		return alphapolisMOFeed(ctx, uri)
+	}
+
 	return "", nil, HttpMetadata{}, fmt.Errorf("%s not supported site", target)
 }
 
