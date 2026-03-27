@@ -1,4 +1,4 @@
-FROM golang:1.23.1-alpine3.20 as builder
+FROM mirror.gcr.io/library/golang:1.23.1-alpine3.20 AS builder
 
 WORKDIR /app
 COPY . /app/
@@ -8,7 +8,7 @@ RUN go mod download
 RUN addgroup -g 6128 -S nonroot && adduser -u 6128 -S nonroot -G nonroot
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/comic2atom ./cmd/converter
 
-FROM scratch as runner
+FROM scratch AS runner
 
 WORKDIR /app
 COPY --from=builder /etc/passwd /etc/group /etc/
