@@ -30,10 +30,11 @@ func TestAlphapolisMangaOfficial(t *testing.T) {
 	fname, feed, _, err := alphapolisMOFeed(context.Background(), testUrl)
 	assert.Nil(t, err)
 	assert.Equal(t, "alphapolis_path_test", fname)
-	assert.Equal(t, feed.Title, "テスト作品タイトル")
-	assert.Equal(t, feed.Description, "これは検証用のあらすじです。")
-	assert.Equal(t, feed.Author.Name, "著者A/漫画 | 著者B/原作")
+	assert.Equal(t, "テスト作品タイトル", feed.Title)
+	assert.Equal(t, "これは検証用のあらすじです。", feed.Description)
+	assert.Equal(t, "テスト著者/漫画 | テスト著者/原作", feed.Author.Name)
 
+	// 無料エピソードのみが取得されること（第3話は有料なので除外される）
 	assert.Equal(t, 2, len(feed.Items))
 
 	testcases := []struct {
@@ -42,14 +43,14 @@ func TestAlphapolisMangaOfficial(t *testing.T) {
 		title string
 	}{
 		{
-			path:  "/manga/official/123/001",
+			path:  "/manga/official/456/1001",
 			thumb: "https://example.com/thumb1.jpg",
-			title: "第1回",
+			title: "第1話",
 		},
 		{
-			path:  "/manga/official/123/002",
+			path:  "/manga/official/456/1002",
 			thumb: "https://example.com/thumb2.jpg",
-			title: "第2回",
+			title: "第2話",
 		},
 	}
 
@@ -63,5 +64,4 @@ func TestAlphapolisMangaOfficial(t *testing.T) {
 			assert.Equal(t, tt.title, feed.Items[index].Title)
 		})
 	}
-
 }

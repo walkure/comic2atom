@@ -2,6 +2,7 @@ package siteloader
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"strings"
@@ -10,6 +11,26 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gorilla/feeds"
 )
+
+// alphapolisMOData represents the JSON structure embedded in the page
+type alphapolisMOData struct {
+	Episodes []alphapolisMOEpisode `json:"episodes"`
+}
+
+type alphapolisMOEpisode struct {
+	EpisodeNo    int                `json:"episodeNo"`
+	URL          string             `json:"url"`
+	ShortTitle   string             `json:"shortTitle"`
+	MainTitle    string             `json:"mainTitle"`
+	ThumbnailURL string             `json:"thumbnailUrl"`
+	UpTime       string             `json:"upTime"`
+	Rental       alphapolisMORental `json:"rental"`
+}
+
+type alphapolisMORental struct {
+	IsFree     bool   `json:"isFree"`
+	FreeExpire *int64 `json:"freeExpire"`
+}
 
 func alphapolisMOFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed, HttpMetadata, error) {
 
@@ -41,49 +62,59 @@ func alphapolisMOFeed(ctx context.Context, target *url.URL) (string, *feeds.Feed
 		Id:          generateHashedHex(link),
 	}
 
-	doc.Find(".episode-unit").Each(func(i int, s *goquery.Selection) {
-
-		freeNode := s.Find(".free")
-		if freeNode.Length() == 0 {
-			return // 無料でない場合はスキップ
-		}
-
-		eTitle := strings.TrimSpace(s.Find(".title").First().Text())
-		eHref := ""
-		if val, ok := s.Find("a.read-episode").Attr("href"); ok && val != "#" {
-			eHref = val
-		} else if val, ok := s.Find("a.read-comments").Attr("href"); ok {
-			eHref = strings.Split(val, "?")[0]
-		}
-
-		eHref, err = resolveRelativeURI(target, eHref)
-		if err != nil {
+	// Find and parse JSON data from script tag
+	var episodesData alphapolisMOData
+	doc.Find("#app-official-manga-toc script[type='application/json']").Each(func(i int, s *goquery.Selection) {
+		jsonText := s.Text()
+		if err := json.Unmarshal([]byte(jsonText), &episodesData); err != nil {
 			return
 		}
-
-		updateTime := s.Find(".up-time").Text()
-		limitText := strings.TrimSpace(freeNode.Text()) // 「2026.02.24まで無料」など
-		thumbURL, _ := s.Find("img").Attr("data-src")
-		if thumbURL == "" {
-			thumbURL, _ = s.Find("img").Attr("src")
-		}
-		item := &feeds.Item{
-			Title:       eTitle,
-			Link:        &feeds.Link{Href: eHref},
-			Description: fmt.Sprintf("%s（更新日: %s）", limitText, updateTime),
-			Created:     parseAPMCDate(updateTime),
-			Id:          generateHashedHex(eHref),
-			Enclosure:   &feeds.Enclosure{Url: thumbURL},
-		}
-		feed.Items = append(feed.Items, item)
 	})
 
+	if len(episodesData.Episodes) == 0 {
+		return "", nil, metadata, fmt.Errorf("alphapolisMO:no episode data found")
+	}
+
+	// Process episodes from JSON
+	for _, ep := range episodesData.Episodes {
+		// Skip non-free episodes
+		if !ep.Rental.IsFree {
+			continue
+		}
+
+		eHref, err := resolveRelativeURI(target, ep.URL)
+		if err != nil {
+			continue
+		}
+
+		// Build description with free status
+		description := ""
+		if ep.UpTime != "" {
+			description = fmt.Sprintf("更新日: %s", ep.UpTime)
+		}
+		if ep.Rental.FreeExpire != nil {
+			expireTime := time.Unix(*ep.Rental.FreeExpire/1000, 0)
+			description = fmt.Sprintf("%sまで無料 (%s)", expireTime.Format("2006.01.02"), description)
+		} else {
+			description = fmt.Sprintf("無料 (%s)", description)
+		}
+
+		item := &feeds.Item{
+			Title:       ep.ShortTitle,
+			Link:        &feeds.Link{Href: eHref},
+			Description: description,
+			Created:     parseAPMCDate(ep.UpTime),
+			Id:          generateHashedHex(eHref),
+			Enclosure:   &feeds.Enclosure{Url: ep.ThumbnailURL},
+		}
+		feed.Items = append(feed.Items, item)
+	}
+
 	if len(feed.Items) == 0 {
-		return "", nil, metadata, fmt.Errorf("alphapolisMO:no episode entry")
+		return "", nil, metadata, fmt.Errorf("alphapolisMO:no free episode entry")
 	}
 
 	return "alphapolis_" + escapePath(target.Path), feed, metadata, nil
-
 }
 
 func parseAPMCDate(raw string) time.Time {

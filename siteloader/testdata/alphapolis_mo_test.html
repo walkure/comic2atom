@@ -4,51 +4,102 @@
 <head>
     <meta property="og:title" content="テスト作品タイトル">
     <meta name="description" content="これは検証用のあらすじです。">
-    <link rel="canonical" href="https://www.example.jp/manga/official/123">
+    <link rel="canonical" href="https://www.example.jp/manga/official/456">
 </head>
 
 <body class="official-mangas">
     <div class="author-label">
-        <div class="mangaka">著者A/漫画</div>
-        <div class="mangaka">著者B/原作</div>
+        <div class="authors">
+            <div class="mangaka">テスト著者/漫画</div>
+            <div class="mangaka">テスト著者/原作</div>
+        </div>
     </div>
 
-    <div class="episode-list">
-        <div class="episode-unit">
-            <div class="flexitems">
-                <div class="title">第1回</div>
-            </div>
-            <div class="content free-item">
-                <div class="up-time">2024.01.01更新</div>
-                <div class="free">無料</div>
-            </div>
-            <img data-src="https://example.com/thumb1.jpg" src="dummy.png">
-            <a href="#" class="episode">装飾</a>
-            <a href="/manga/official/123/001" class="read-episode">読む</a>
-        </div>
-
-        <div class="episode-unit">
-            <div class="flexitems">
-                <div class="title">第2回</div>
-            </div>
-            <div class="content free-item">
-                <div class="up-time">2024.02.01更新</div>
-                <div class="free"><span class="open-limit">2026.12.31まで</span>無料</div>
-            </div>
-            <img src="https://example.com/thumb2.jpg">
-            <a href="/manga/official/123/002" class="read-episode">読む</a>
-        </div>
-
-        <div class="episode-unit">
-            <div class="flexitems">
-                <div class="title">第3回（有料）</div>
-            </div>
-            <div class="content">
-                <div class="up-time">2024.03.01更新</div>
-            </div>
-            <img data-src="https://example.com/paid.jpg">
-            <a href="/manga/official/123/003" class="read-episode">チケットで読む</a>
-        </div>
+    <div id="app-official-manga-toc">
+        <script type="application/json">
+            {
+                "isPhone": false,
+                "isPreview": false,
+                "episodeUrl": "https://example.com/manga/official/episodes.json",
+                "mangaId": 456,
+                "mangaTitle": "テスト作品タイトル",
+                "nextZeroYenSeconds": 0,
+                "episodes": [
+                    {
+                        "episodeNo": 1001,
+                        "url": "/manga/official/456/1001",
+                        "shortTitle": "第1話",
+                        "mainTitle": "第1話『始まり』",
+                        "isPublic": true,
+                        "thumbnailUrl": "https://example.com/thumb1.jpg",
+                        "chapter": "",
+                        "upTime": "2025.01.15更新",
+                        "likes": "10000",
+                        "comments": "50",
+                        "dispOrder": 1001,
+                        "rental": {
+                            "isFree": true,
+                            "freeExpire": null,
+                            "isOutOfPrint": false,
+                            "isOnRental": false,
+                            "expiringDate": null,
+                            "freeChange": null,
+                            "isZeroYenTarget": false,
+                            "zeroYenStatus": "UNAVAILABLE",
+                            "coin": 0
+                        }
+                    },
+                    {
+                        "episodeNo": 1002,
+                        "url": "/manga/official/456/1002",
+                        "shortTitle": "第2話",
+                        "mainTitle": "第2話『展開』",
+                        "isPublic": true,
+                        "thumbnailUrl": "https://example.com/thumb2.jpg",
+                        "chapter": "",
+                        "upTime": "2025.02.20更新",
+                        "likes": "8000",
+                        "comments": "30",
+                        "dispOrder": 1002,
+                        "rental": {
+                            "isFree": true,
+                            "freeExpire": 1735689600000,
+                            "isOutOfPrint": false,
+                            "isOnRental": false,
+                            "expiringDate": null,
+                            "freeChange": null,
+                            "isZeroYenTarget": false,
+                            "zeroYenStatus": "UNAVAILABLE",
+                            "coin": 0
+                        }
+                    },
+                    {
+                        "episodeNo": 1003,
+                        "url": "/manga/official/456/1003",
+                        "shortTitle": "第3話",
+                        "mainTitle": "第3話『有料回』",
+                        "isPublic": true,
+                        "thumbnailUrl": "https://example.com/thumb3.jpg",
+                        "chapter": "",
+                        "upTime": "2025.03.25更新",
+                        "likes": "7000",
+                        "comments": "25",
+                        "dispOrder": 1003,
+                        "rental": {
+                            "isFree": false,
+                            "freeExpire": null,
+                            "isOutOfPrint": false,
+                            "isOnRental": false,
+                            "expiringDate": null,
+                            "freeChange": null,
+                            "isZeroYenTarget": false,
+                            "zeroYenStatus": "UNAVAILABLE",
+                            "coin": 70
+                        }
+                    }
+                ]
+            }
+        </script>
     </div>
 </body>
 
